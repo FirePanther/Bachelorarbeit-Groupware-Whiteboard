@@ -1,0 +1,12 @@
+config.inc.php
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Mac OS X
+.DS_Store
+._*
