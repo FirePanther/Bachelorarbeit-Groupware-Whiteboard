@@ -1,0 +1,1 @@
+jsdoc -d jsdoc -r client
