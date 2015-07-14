@@ -1,5 +1,6 @@
 /**
- * 
+ * The Main class
+ * @constructor
  */
 function Main() {
 	var $window = $(window);
