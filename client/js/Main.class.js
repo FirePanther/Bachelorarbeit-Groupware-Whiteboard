@@ -11,14 +11,16 @@ function Main() {
 	})(this));
 }
 
-Main.prototype = (function() {
-	return {
-		init: function() {
-			this.board = new Board($("#board"));
-			return true;
-		},
-		getBoard: function() {
-			return this.board;
-		}
-	};
-})();
+Main.prototype.init = function() {
+	this.history = new History();
+	
+	this.board = new Board($("#board"));
+	
+	this.draw = new Draw();
+	this.registerTool(this.draw);
+};
+
+Main.prototype.registerTool = function(tool) {
+	this.history.registerTool(tool);
+	this.board.registerTool(tool);
+};
