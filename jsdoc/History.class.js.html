@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: Board.class.js</title>
+    <title>JSDoc: Source: History.class.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: Board.class.js</h1>
+    <h1 class="page-title">Source: History.class.js</h1>
 
     
 
@@ -27,63 +27,65 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * The Board class manages the board canvas element.
+ * Enum for history types.
+ * @readonly
+ * @enum {number}
+ * @example
+ * HistoryType.TOOLNAME; // 3
+ * HistoryType.properties[3]; // "TOOLNAME"
+ */
+var HistoryType = {
+	/**
+	 * Contains the keys of this enum as strings with the number as index.
+	 * @type {Object}
+	 */
+	properties: {
+		index: 0
+	},
+	
+	/**
+	 * Adds all enum keys as readable values (strings) into .properties.
+	 */
+	initProperties: function() {
+		this.properties = {
+			index: this.properties.index
+		};
+		for (var i in this) {
+			if (typeof this[i] == "number") {
+				this.properties[this[i]] = i;
+			}
+		}
+	}
+};
+
+
+/**
+ * The Drawing Handler. Allows to draw on a board.
  * @constructor
  * @param {jQuery} [$board] - The canvas jQuery element.
  */
-function Board($board) {
-	this.context = null;
-	this.tools = {};
-	
-	$board = $board || 0;
-	if ($board !== 0 &amp;&amp; $board.length) this.setBoard($board);
+function History(board) {
+	this.history = [];
 };
 
 /**
- * Selects the board (canvas) element.
- * @param {jQuery} $board - The canvas jQuery element.
+ * Adds an entry into the history.
+ * @param {Object} entry - Array of values.
+ * @param {integer} entry.type - The type of the object by the HistoryType enum.
  */
-Board.prototype.setBoard = function($board) {
-	if ($board.length > 1) $board = $($board[0]);
-	this.$board = $board;
-	this.context = this.$board[0].getContext("2d");
-	this.resize();
-};
-
-/**
- * Resizes the canvas element to the window size.
- */
-Board.prototype.resize = function() {
-	this.$board.attr({
-		width: window.innerWidth,
-		height: window.innerHeight
-	});
-};
-
-/**
- * Clears the canvas.
- */
-Board.prototype.clear = function() {
-	this.context.clearRect(0, 0, this.$board.width(), this.$board.height());
-};
-
-/**
- * Redraw the whole board.
- */
-Board.prototype.redraw = function() {
-	this.clear();
+History.prototype.add = function(entry) {
+	this.history.push(entry);
 };
 
 /**
  * Registers (adds) a new tool.
  * @param {Object) tool - The object of the tool.
  */
-Board.prototype.registerTool = function(tool, name) {
-	// name is the constructor name with lcfirst.
-	name = name || tool.constructor.name.substr(0, 1).toLowerCase() + tool.constructor.name.substr(1);
-	this.tools[tool.constructor.name] = this.tools[tool.constructor.name] || {
-		name: name
-	};
+History.prototype.registerTool = function(tool, name) {
+	name = name || tool.constructor.name;
+	ucname = name.toUpperCase();
+	HistoryType[ucname] = HistoryType[ucname] || ++HistoryType.properties.index;
+	HistoryType.initProperties();
 };
 </code></pre>
         </article>
