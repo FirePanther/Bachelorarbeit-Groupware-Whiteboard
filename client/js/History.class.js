@@ -51,7 +51,7 @@ History.prototype.add = function(entry) {
 
 /**
  * Registers (adds) a new tool.
- * @param {Object) tool - The object of the tool.
+ * @param {Object} tool - The object of the tool.
  */
 History.prototype.registerTool = function(tool, name) {
 	name = name || tool.constructor.name;

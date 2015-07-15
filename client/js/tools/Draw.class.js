@@ -9,7 +9,7 @@ function Draw() {
 };
 
 /**
- * Initializes the mouse events to the board.
+ * Initializes the mouse events for the board.
  */
 Draw.prototype.initEvents = function() {
 	var self = this;
@@ -51,9 +51,9 @@ Draw.prototype.initEvents = function() {
 /**
  * A local history just for the "current" drawing (from mousedown to mouseup)
  * @param {Object} position - The current position of the mouse.
- * @param {Object} position.0 - The x position of the mouse.
- * @param {Object} position.1 - The x position of the mouse.
- * @param {Object} state - The state of the mouse.
+ * @param {number} position.0 - The x position of the mouse.
+ * @param {number} position.1 - The x position of the mouse.
+ * @param {integer} state - The state of the mouse.
  * @param {integer} state.0 - mouse is down
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
@@ -68,9 +68,9 @@ Draw.prototype.addHistory = function(position, state) {
 /**
  * Draws the "current" drawing line for line.
  * @param {Object} position - The current position of the mouse.
- * @param {Object} position.0 - The x position of the mouse.
- * @param {Object} position.1 - The x position of the mouse.
- * @param {Object} state - The state of the mouse.
+ * @param {number} position.0 - The x position of the mouse.
+ * @param {number} position.1 - The x position of the mouse.
+ * @param {integer} state - The state of the mouse.
  * @param {integer} state.0 - mouse is down
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
