@@ -1,7 +1,58 @@
 .fullscreen {
 	position: absolute;
-	left: 0;
 	top: 0;
 	right: 0;
 	bottom: 0;
+}
+
+.left {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+}
+
+.toolbar {
+	background-color: #333;
+}
+
+.toolbar .tools .tool {
+	float: left;
+	padding: 2px;
+	height: 31px;
+	box-sizing: border-box;
+	cursor: pointer;
+	width: 50%;
+}
+.toolbar .tools .tool img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+.toolbar .colors, .toolbar .tools {
+	margin: 10px 0;
+	padding: 2px;
+}
+.toolbar .colors::after, .toolbar .tools::after {
+	content: "";
+	display: block;
+	clear: left;
+}
+
+.toolbar .colors .color {
+	float: left;
+	padding: 2px;
+	width: 50%;
+	box-sizing: border-box;
+	height: 31px;
+	cursor: pointer;
+}
+
+.toolbar .colors .color:not(.selected):hover {
+	opacity: .8;
+}
+
+.toolbar .selected {
+	border: 2px solid white;
+	padding: 0 !important;
 }

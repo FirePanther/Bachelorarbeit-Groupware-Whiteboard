@@ -3,30 +3,18 @@
  * @readonly
  * @enum {number}
  * @example
- * HistoryType.TOOLNAME; // 3
- * HistoryType.properties[3]; // "TOOLNAME"
+ * HistoryType.TESTTOOL; // 3
+ * HistoryType.properties[3].toolName; // "TestTool"
  */
 var HistoryType = {
 	/**
-	 * Contains the keys of this enum as strings with the number as index.
+	 * Contains the integer value of this enum as key with an object with details as value.
+	 * The object contains the toolClassName and the toolName.
+	 * The "index" key returns the last added index value and increases automatically by registering more tools.
 	 * @type {Object}
 	 */
 	properties: {
 		index: 0
-	},
-	
-	/**
-	 * Adds all enum keys as readable values (strings) into .properties.
-	 */
-	initProperties: function() {
-		this.properties = {
-			index: this.properties.index
-		};
-		for (var i in this) {
-			if (typeof this[i] == "number") {
-				this.properties[this[i]] = i;
-			}
-		}
 	}
 };
 
@@ -41,21 +29,31 @@ function History(board) {
 };
 
 /**
- * Adds an entry into the history.
+ * Adds an entry into the history with the current timestamp.
  * @param {Object} entry - Array of values.
  * @param {integer} entry.type - The type of the object by the HistoryType enum.
  */
 History.prototype.add = function(entry) {
-	this.history.push(entry);
+	// todo: get difference between server, exact time of SERVER, NOT CLIENT
+	var id = new Date().getTime();
+	while (this.history[id] !== undefined) {
+		id++;
+	}
+	entry.own = true;
+	this.history[id] = entry;
 };
 
 /**
- * Registers (adds) a new tool.
- * @param {Object} tool - The object of the tool.
+ * 
+ * 
  */
-History.prototype.registerTool = function(tool, name) {
-	name = name || tool.constructor.name;
-	ucname = name.toUpperCase();
-	HistoryType[ucname] = HistoryType[ucname] || ++HistoryType.properties.index;
-	HistoryType.initProperties();
+History.prototype.registerTool = function(toolName) {
+	toolClassName = ucfirst(toolName);
+	toolName = lcfirst(toolName);
+	toolUCName = toolName.toUpperCase();
+	HistoryType[toolUCName] = HistoryType[toolUCName] || ++HistoryType.properties.index;
+	HistoryType.properties[HistoryType.properties.index] = {
+		toolClassName: toolClassName,
+		toolName: toolName
+	};
 };

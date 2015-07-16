@@ -6,6 +6,7 @@
 function Board($board) {
 	this.context = null;
 	this.tools = {};
+	this.events = [];
 	
 	$board = $board || 0;
 	if ($board !== 0 && $board.length) this.setBoard($board);
@@ -27,9 +28,11 @@ Board.prototype.setBoard = function($board) {
  */
 Board.prototype.resize = function() {
 	this.$board.attr({
-		width: window.innerWidth,
+		left: main.tools.toolbarWidth,
+		width: window.innerWidth - main.tools.toolbarWidth,
 		height: window.innerHeight
 	});
+	this.redraw();
 };
 
 /**
@@ -44,16 +47,16 @@ Board.prototype.clear = function() {
  */
 Board.prototype.redraw = function() {
 	this.clear();
-};
+	// will be removed
+	//this.context.shadowBlur=20;
+	//this.context.shadowColor="black";
+	this.context.lineWidth = 5;
 
-/**
- * Registers (adds) a new tool.
- * @param {Object) tool - The object of the tool.
- */
-Board.prototype.registerTool = function(tool, name) {
-	// name is the constructor name with lcfirst.
-	name = name || tool.constructor.name.substr(0, 1).toLowerCase() + tool.constructor.name.substr(1);
-	this.tools[tool.constructor.name] = this.tools[tool.constructor.name] || {
-		name: name
-	};
+	var h;
+	for (var i in main.history.history) {
+		h = main.history.history[i];
+		if (HistoryType.properties[h.type]) {
+			main.registeredTools[lcfirst(HistoryType.properties[h.type].toolClassName)].redraw(h, HistoryType.properties[h.type].toolName);
+		}
+	}
 };
