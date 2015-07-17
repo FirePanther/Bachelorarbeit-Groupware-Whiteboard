@@ -17,7 +17,7 @@ function Draw() {
  * 
  */
 Draw.prototype.init = function() {
-	main.history.registerTool(this, "brush");
+	main.history.registerTool("brush", "draw");
 	main.tools.registerTool(this, "draw", "brush");
 };
 
@@ -30,61 +30,58 @@ Draw.prototype.initEvents = function() {
 	main.board.events.push("mousedown", "mousemove", "mouseleave", "mouseenter", "mouseup");
 	main.board.$board.on("mousedown", function(event) {
 		// start drawing
-		self.drawing = 1;
-		self.history = [];
-		var position = [event.offsetX, event.offsetY];
-		
-		self.addHistory(position, 0);
-		self.draw(position, 0);
+		self.drawAction(event, true);
 	}).on("mousemove", function(event) {
 		// still drawing
-		if (self.drawing == 1) {
-			var position = [event.offsetX, event.offsetY];
-			self.addHistory(position, 1);
-			self.draw(position, 1);
-		}
+		if (self.drawing == 1) self.drawAction(event, false, false, 1);
 	}).on("mouseleave", function(event) {
 		// pause drawing
 		if (self.drawing == 1) {
+			self.drawAction(event, false, true, 2);
 			self.drawing = 2;
-			
-			correctedEvent = self.correctByDirection(event);
-			
-			var position = [correctedEvent.offsetX, correctedEvent.offsetY];
-			self.addHistory(position, 2);
-			self.draw(position, 2);
-			
-			main.history.add({
-				type: HistoryType.DRAW,
-				drawing: self.history
-			});
 		}
 	}).on("mouseenter", function(event) {
-		// continue drawing or start drawing
-		if (event.buttons == 1) {
-			self.drawing = 1;
-			self.history = [];
-
-			correctedEvent = self.correctByDirection(event);
-			
-			var position = [correctedEvent.offsetX, correctedEvent.offsetY];
-			self.addHistory(position, 0);
-			self.draw(position, 0);
-		}
+		// continue drawing
+		if (self.drawing == 2 && event.buttons == 1) self.drawAction(event, true, true);
 	}).on("mouseup", function(event) {
 		// stop drawing
-		self.drawing = 0;
-		
-		var position = [event.offsetX, event.offsetY];
-		self.addHistory(position, 2);
-		self.draw(position, 2);
-		
+		if (self.drawing) {
+			self.drawAction(event, false, false, 2);
+			self.drawing = 0;
+		}
+	});
+};
+
+/**
+ * Saves the whole "draw" action.
+ * @param {Object} event - The mouse event.
+ * @param {boolean} [begin=false] - Is this the beginning of the drawing? (e.g. for mousedown and mouseenter)
+ * @oaram {boolean} [correctByDirection=false] - Should the event offset be corrected? (e.g. for mouseenter and mouseleave)
+ * @param {integer} [setState=0] - The state of the mouse (see state@"Draw::addHistory" or state@"Draw::draw").
+ */
+Draw.prototype.drawAction = function(event, begin, correctByDirection, setState) {
+	begin = begin || false;
+	correctByDirection = correctByDirection || false;
+	setState = setState || 0;
+	
+	this.drawing = 1;
+	if (begin) {
+		this.history = [];
+	}
+	
+	if (correctByDirection) event = this.correctByDirection(event);
+	var position = [event.offsetX, event.offsetY];
+	
+	this.addHistory(position, setState);
+	this.draw(position, setState);
+	
+	if (setState == 2) {
 		main.history.add({
 			type: HistoryType.BRUSH,
-			drawing: self.history,
+			drawing: this.history,
 			color: main.tools.options.color
 		});
-	});
+	}
 };
 
 /**
