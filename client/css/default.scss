@@ -13,8 +13,22 @@
 	position: absolute;
 	z-index: 100;
 	
+	.cursorLabel {
+		font-family: verdana;
+		font-size: 8px;
+		position: absolute;
+		left: 14px;
+	}
+	
 	.pointer {
-		background: url(../img/arrow.png);
+		position: absolute;
+		background-image: url(../img/arrow.png);
+		background-size: contain;
+		width: 14px;
+		height: 20px;
+		opacity: .5;
+		top: -4px;
+		left: -3px;
 	}
 }
 
