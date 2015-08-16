@@ -13,10 +13,11 @@ function Main() {
 		};
 	})(this));
 	
+	this.server = new Server();
 	this.tools = new Tools();
 	
 	// contains all tools with the toolName as key and the object as value
-	this.registeredTools = [];
+	this.registeredTools = {};
 	
 	// the todo list of all tools to register
 	this.registerToolToDo = [];
@@ -29,9 +30,11 @@ function Main() {
 
 Main.prototype.init = function() {
 	debug.log("+ Main init");
+	
 	this.history = new History();
 	this.board = new Board($(".board"));
 	
+	this.server.init();
 	this.tools.init();
 	
 	// initialized main
@@ -39,7 +42,7 @@ Main.prototype.init = function() {
 	
 	// register tools if todo list exist
 	for (var i in this.registerToolToDo) {
-		this.registerTool(this.registerToolToDo[i].toolName, this.registerToolToDo[i].toolClassName);
+		this.registerTool.apply(this, this.registerToolToDo[i]);
 	}
 	this.registerToolToDo = [];
 	
@@ -47,24 +50,26 @@ Main.prototype.init = function() {
 };
 
 /**
- * Registers a tool in the Main object.
+ * Registers an object in the Main object.
  * @param {string} toolName - The name of the tool (of the class).
  */
-Main.prototype.registerTool = function(toolName) {
-	toolClassName = ucfirst(toolName);
-	toolName = lcfirst(toolName);
+Main.prototype.registerTool = function(toolObject) {
 	if (this.initialized) {
-		debug.log("+ Main registering tool: " + toolName + " (" + toolClassName + ".class)");
+		var toolClassName = toolObject.constructor.name;
+		debug.log("+ Main registering tool: " + toolClassName + ".class");
 		
-		this.registeredTools[toolName] = new window[toolClassName]();
-		this.registeredTools[toolName].init();
+		this.registeredTools[toolClassName] = toolObject;
+
+		if (toolObject.toolSettings) {
+			for (var i in toolObject.toolSettings) {
+				this.history.registerTool(toolObject, i);
+				this.tools.registerTool(toolObject, i);
+			}
+		}
 		
-		debug.log("- Main registering tool: " + toolName + " (" + toolClassName + ".class)");
+		debug.log("- Main registering tool: " + toolClassName + ".class");
 	} else {
 		// just add to the todo list for now, wait for initialization
-		this.registerToolToDo.push({
-			toolName: toolName,
-			toolClassName: toolClassName
-		});
+		this.registerToolToDo.push(arguments);
 	}
 };

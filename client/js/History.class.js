@@ -25,7 +25,8 @@ var HistoryType = {
  * @param {jQuery} [$board] - The canvas jQuery element.
  */
 function History(board) {
-	this.history = [];
+	this.history = {};
+	this.tmp = {};
 };
 
 /**
@@ -34,26 +35,32 @@ function History(board) {
  * @param {integer} entry.type - The type of the object by the HistoryType enum.
  */
 History.prototype.add = function(entry) {
-	// todo: get difference between server, exact time of SERVER, NOT CLIENT
-	var id = new Date().getTime();
-	while (this.history[id] !== undefined) {
-		id++;
-	}
+	var id = main.server.date.getTime() + "_" + hash(entry);
 	entry.own = true;
+	this.history[id] = entry;
+	return {
+		id: id,
+		entry: entry
+	};
+};
+
+/**
+ *
+ */
+History.prototype.addById = function(id, own, entry) {
+	entry.own = own;
 	this.history[id] = entry;
 };
 
 /**
  * 
- * 
  */
-History.prototype.registerTool = function(toolName) {
-	toolClassName = ucfirst(toolName);
-	toolName = lcfirst(toolName);
+History.prototype.registerTool = function(toolObject, toolName) {
 	toolUCName = toolName.toUpperCase();
 	HistoryType[toolUCName] = HistoryType[toolUCName] || ++HistoryType.properties.index;
 	HistoryType.properties[HistoryType.properties.index] = {
-		toolClassName: toolClassName,
+		toolObject: toolObject,
 		toolName: toolName
 	};
 };
+

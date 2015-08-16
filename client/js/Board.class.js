@@ -50,13 +50,12 @@ Board.prototype.redraw = function() {
 	// will be removed
 	//this.context.shadowBlur=20;
 	//this.context.shadowColor="black";
-	this.context.lineWidth = 5;
 
 	var h;
 	for (var i in main.history.history) {
 		h = main.history.history[i];
 		if (HistoryType.properties[h.type]) {
-			main.registeredTools[lcfirst(HistoryType.properties[h.type].toolClassName)].redraw(h, HistoryType.properties[h.type].toolName);
+			HistoryType.properties[h.type].toolObject.redraw(h, HistoryType.properties[h.type].toolName);
 		}
 	}
 };

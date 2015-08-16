@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="53px" height="53px" viewBox="0 0 53 53" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>pencil</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="pencil" sketch:type="MSArtboardGroup">
+            <g id="Pencil_1_" sketch:type="MSLayerGroup" transform="translate(24.425563, 30.042807) rotate(-135.000000) translate(-24.425563, -30.042807) translate(15.425563, -4.957193)">
+                <g id="Pencil" transform="translate(0.768879, 0.768879)" sketch:type="MSShapeGroup">
+                    <path d="M12.3217407,8.30663743 L6.29153412,8.30663743 L1.76887914,19.6132749 L1.76887914,27.1510331 L16.8443957,27.1510331 L16.8443957,19.6132749 L12.3217407,8.30663743 Z" id="Head" fill="#EBD6BD"></path>
+                    <path d="M16.8443957,49.09461 L16.8443957,19.6132749 C16.8443957,20.4173113 14.9599561,20.9533355 13.0755166,20.9533355 C11.191077,20.9533355 10.0604133,20.6853234 9.30663743,20.2833052 C8.92974952,20.6853234 7.42219786,21.0873416 5.53775829,21.0873416 C3.2764308,21.0873416 1.76887914,20.4173113 1.76887914,19.7472809 L1.76887914,49.228616 L16.8443957,49.228616 L16.8443957,49.09461 Z" id="Shape" fill="#F3AF14"></path>
+                    <rect id="Eraser_x5F_Holder" fill="#E6E6E6" x="1.76887914" y="49.228616" width="15.0755166" height="7.53775829"></rect>
+                    <path d="M6.29153412,8.30663743 L9.30663743,0.768879144 L12.3217407,8.30663743 L6.29153412,8.30663743 Z" id="Nip" fill="#4C4C4C"></path>
+                    <rect id="Eraser" fill="#FDB59D" x="1.76887914" y="56.7663743" width="15.0755166" height="11.3066374"></rect>
+                    <g id="Bevel" transform="translate(1.000000, 19.613275)" fill="#DB9312">
+                        <path d="M8.30663743,29.4824391 L8.30663743,0.908496155 C7.5528616,1.30720234 6.42219786,1.70590852 4.53775829,1.70590852 C2.2764308,1.70590852 0.768879144,1.04139822 0.768879144,0.376887914 L0.768879144,29.6153412 L8.30663743,29.6153412 L8.30663743,29.4824391 Z" id="Shape"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

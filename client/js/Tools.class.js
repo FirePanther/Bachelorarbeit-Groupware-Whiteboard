@@ -1,10 +1,17 @@
 /**
+ * 
+ */
+var ToolSettingType = {
+	BUTTONS: 1
+};
+
+/**
  * Tools...
  * @constructor
  */
 function Tools() {
 	this.toolbarWidth = 80;
-	this.tools = [];
+	this.registeredTools = [];
 	
 	this.options = {
 		color: null
@@ -20,6 +27,10 @@ Tools.prototype.init = function() {
 	
 	this.$tools = $("<section class=\"tools\"/>");
 	this.$toolbar.append(this.$tools);
+	
+	this.$settings = $("<section class=\"settings\"/>");
+	this.$toolbar.append(this.$settings);
+	
 	this.initColors();
 };
 
@@ -42,8 +53,14 @@ Tools.prototype.initColors = function() {
 	];
 	
 	this.$colors = $("<section class=\"colors\"/>");
+	
+	this.$colorpicker = $("<input type=\"color\" class=\"colorpicker\" maxlength=\"7\" />").on("change keyup", function() {
+		self.selectColor($(this).val());
+	});
+	this.$colors.append(this.$colorpicker);
+	
 	for (var i in this.colorIDs) {
-		this["$color" + i] = $("<div class=\"color\" data-color-id=\"" + i + "\" data-color=\"" + this.colorIDs[i].substr(1) + "\" style=\"background-color: " + this.colorIDs[i] + "\" />");
+		this["$color" + i] = $("<div class=\"color\" data-color-id=\"" + i + "\" data-color=\"" + this.colorIDs[i].substr(1) + "\"><div style=\"background-color: " + this.colorIDs[i] + "\" /></div>");
 		this["$color" + i].on("click", function() {
 			self.selectColor($(this).attr("data-color-id"));
 		});
@@ -56,18 +73,25 @@ Tools.prototype.initColors = function() {
 /**
  * 
  */
-Tools.prototype.registerTool = function(toolObject, toolName, toolFunction) {
-	toolClassName = ucfirst(toolName);
-	toolName = lcfirst(toolName);
-	var toolID = this.tools.length;
+Tools.prototype.registerTool = function(toolObject, toolName) {
+	debug.log("registering");
 	
-	this.tools.push({
+	var toolID = this.registeredTools.length;
+	
+	this.registeredTools.push({
+		toolObject: toolObject,
 		toolName: toolName,
-		toolFunction: toolFunction,
 	});
 	
-	var settings = toolObject.toolSettings[toolFunction];
-	this["$tool" + toolID] = $("<div class=\"tool " + toolName + " data-tool-id=\"" + toolID + "\"\">" + settings.icon + "</div>")
+	var settings = toolObject.toolSettings[toolName];
+	
+	// the tool icon in the toolbar
+	this["$tool" + toolID] = $("<div class=\"tool " + toolName + "\" data-tool-id=\"" + toolID + "\">" + settings.icon + "</div>");
+	this["$tool" + toolID].click((function(self, toolID) {
+		return function() {
+			self.selectTool(toolID);
+		};
+	})(this, toolID));
 	this.$tools.append(this["$tool" + toolID]);
 	
 	if (!toolID) {
@@ -81,7 +105,11 @@ Tools.prototype.registerTool = function(toolObject, toolName, toolFunction) {
  */
 Tools.prototype.getColor = function(colorID) {
 	if (colorID === undefined) {
-		return this.colorIDs[this.options.color];
+		if (this.options.color == -1) {
+			return this.options.colorCode;
+		} else {
+			return this.colorIDs[this.options.color];
+		}
 	} else {
 		return this.colorIDs[colorID];
 	}
@@ -90,9 +118,26 @@ Tools.prototype.getColor = function(colorID) {
 /**
  * 
  */
-Tools.prototype.selectColor = function(colorID) {
+Tools.prototype.selectColor = function(color) {
 	this.$colors.find(".selected").removeClass("selected");
-	this["$color" + colorID].addClass("selected");
+	if (/^\#[a-fA-F0-9]{6}$/.test(color)) {
+		var colorCode = color, colorID = -1;
+		for (var i in this.colorIDs) {
+			if (this.colorIDs[i].toLowerCase() == colorCode.toLowerCase()) {
+				colorID = i;
+				break;
+			}
+		}
+		this.options.colorCode = colorCode;
+	} else {
+		var colorID = parseInt(color);
+		if (colorID < 0) colorID = 0;
+		else if (colorID >= this.colorIDs.length) colorID = this.colorIDs.length - 1;
+	}
+	if (colorID != -1) {
+		this["$color" + colorID].addClass("selected");
+		this.$colorpicker.val(this.colorIDs[colorID]);
+	}
 	
 	this.options.color = parseInt(colorID);
 };
@@ -106,5 +151,11 @@ Tools.prototype.selectTool = function(toolID) {
 	
 	this.options.tool = parseInt(toolID);
 	
-	main.registeredTools[this.tools[toolID].toolName].initEvents();
+	console.log(this.registeredTools[toolID]);
+	
+	// deinit
+	for (var i in main.board.events) {
+		main.board.$board.off(main.board.events[i]);
+	}
+	this.registeredTools[toolID].toolObject.initEvents(this.registeredTools[toolID].toolName);
 };

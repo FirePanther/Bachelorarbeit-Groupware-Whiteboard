@@ -1,58 +1,23 @@
-.fullscreen {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-}
+.fullscreen { position: absolute; top: 0; right: 0; bottom: 0; }
 
-.left {
-	position: absolute;
-	left: 0;
-	top: 0;
-	bottom: 0;
-}
+.left { position: absolute; left: 0; top: 0; bottom: 0; }
 
-.toolbar {
-	background-color: #333;
-}
+.toolbar { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); }
 
-.toolbar .tools .tool {
-	float: left;
-	padding: 2px;
-	height: 31px;
-	box-sizing: border-box;
-	cursor: pointer;
-	width: 50%;
-}
-.toolbar .tools .tool img {
-	max-width: 100%;
-	max-height: 100%;
-}
+.toolbar .selected { padding: 2px !important; box-shadow: rgba(255, 255, 255, 0.7) 0 0 2px 1px inset !important; }
 
-.toolbar .colors, .toolbar .tools {
-	margin: 10px 0;
-	padding: 2px;
-}
-.toolbar .colors::after, .toolbar .tools::after {
-	content: "";
-	display: block;
-	clear: left;
-}
+.toolbar > * { margin: 10px 0; padding: 2px; }
 
-.toolbar .colors .color {
-	float: left;
-	padding: 2px;
-	width: 50%;
-	box-sizing: border-box;
-	height: 31px;
-	cursor: pointer;
-}
+.toolbar > *::after { content: ""; display: block; clear: left; }
 
-.toolbar .colors .color:not(.selected):hover {
-	opacity: .8;
-}
+.toolbar .tools .tool, .toolbar .colors .color { float: left; padding: 4px; box-shadow: transparent 0 0 2px 1px inset; transition: all 100ms ease-in-out; width: 50%; box-sizing: border-box; height: 31px; cursor: pointer; }
 
-.toolbar .selected {
-	border: 2px solid white;
-	padding: 0 !important;
-}
+.toolbar .tools .tool { border-radius: 10px; text-align: center; }
+
+.toolbar .tools .tool img { max-width: 100%; max-height: 100%; }
+
+.toolbar .colors .colorpicker { box-sizing: border-box; width: 100%; height: 31px; text-transform: uppercase; margin-bottom: 3px; }
+
+.toolbar .colors .color:not(.selected):hover { opacity: .8; }
+
+.toolbar .colors .color div { width: 100%; height: 100%; }

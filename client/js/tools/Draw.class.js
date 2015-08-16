@@ -7,27 +7,29 @@ function Draw() {
 	this.drawing = 0;
 	
 	this.toolSettings = {
+		pencil: {
+			icon: '<img src="img/pencil.svg" alt="Pencil" />'
+		},
 		brush: {
-			icon: "<img src=\"img/brush.svg\" alt=\"Brush\" />"
+			icon: '<img src="img/brush.svg" alt="Brush" />',
+			settings: {
+				type: ToolSettingType.BUTTONS,
+				thin: {},
+				medium: {},
+				thick: {}
+			}
 		}
 	};
 };
 
 /**
- * 
- */
-Draw.prototype.init = function() {
-	main.history.registerTool("brush", "draw");
-	main.tools.registerTool(this, "draw", "brush");
-};
-
-/**
  * Initializes the mouse events for the board.
  */
-Draw.prototype.initEvents = function() {
-	var self = this;
-	
+Draw.prototype.initEvents = function(toolName) {
+	this.toolName = toolName;
 	main.board.events.push("mousedown", "mousemove", "mouseleave", "mouseenter", "mouseup");
+	
+	var self = this;
 	main.board.$board.on("mousedown", function(event) {
 		// start drawing
 		self.drawAction(event, true);
@@ -66,51 +68,24 @@ Draw.prototype.drawAction = function(event, begin, correctByDirection, setState)
 	
 	this.drawing = 1;
 	if (begin) {
-		this.history = [];
+		this.tmpHistory = [];
 	}
 	
-	if (correctByDirection) event = this.correctByDirection(event);
+	if (correctByDirection) event = correctByDirection(event);
 	var position = [event.offsetX, event.offsetY];
 	
-	this.addHistory(position, setState);
-	this.draw(position, setState);
+	this.addHistory(this.toolName, position, setState);
+	this.draw(this.toolName, position, setState);
 	
 	if (setState == 2) {
-		main.history.add({
-			type: HistoryType.BRUSH,
-			drawing: this.history,
+		// finished the current drawing
+		var history = main.history.add({
+			type: HistoryType[this.toolName.toUpperCase()],
+			drawing: this.tmpHistory,
 			color: main.tools.options.color
 		});
+		main.server.broadcast("board", history);
 	}
-};
-
-/**
- * Corrects the leaving to and entering from the edges of the screen. Drawing to and from the edges is without margins.
- * @param {Object} event - The event of the mouse.
- * @returns {Object} The corrected version of the event where the offset from where the mouse is coming is exactly on
- *			the edge (e.g. from left => offsetX = 0).
- */
-Draw.prototype.correctByDirection = function(event) {
-	var isLeft = event.offsetX,
-		isTop = event.offsetY,
-		isRight = event.currentTarget.clientWidth - event.offsetX,
-		isBottom = event.currentTarget.clientHeight - event.offsetY;
-	
-	// check 
-	if (isLeft <= isTop && isLeft <= isRight && isLeft <= isBottom) {
-		// left
-		event.offsetX = 0;
-	} else if (isTop <= isLeft && isTop <= isRight && isTop <= isBottom) {
-		// top
-		event.offsetY = 0;
-	} else if (isRight <= isLeft && isRight <= isTop && isRight <= isBottom) {
-		// right
-		event.offsetX = event.currentTarget.clientWidth;
-	} else if (isBottom <= isLeft && isBottom <= isRight && isBottom <= isTop) {
-		// bottom
-		event.offsetY = event.currentTarget.clientHeight;
-	}
-	return event;
 };
 
 /**
@@ -123,8 +98,9 @@ Draw.prototype.correctByDirection = function(event) {
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
  */
-Draw.prototype.addHistory = function(position, state) {
-	this.history.push({
+Draw.prototype.addHistory = function(toolName, position, state) {
+	this.tmpHistory.push({
+		toolName: toolName,
 		position: position,
 		state: state
 	});
@@ -139,12 +115,22 @@ Draw.prototype.addHistory = function(position, state) {
  * @param {integer} state.0 - mouse is down
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
+ * @param ...
  */
-Draw.prototype.draw = function(position, state, color, close) {
+Draw.prototype.draw = function(toolName, position, state, color, close, noBroadcast) {
 	close = close || 0;
 	switch (state) {
 		// mouse down
 		case 0:
+			switch (toolName) {
+				case "brush":
+					main.board.context.lineWidth = 5;
+					break;
+				case "pencil":
+					main.board.context.lineWidth = 1;
+					break;
+			}
+		
 			main.board.context.strokeStyle = main.tools.getColor(color);
 			
 			// bevel (eckig), miter (spitz), round (rund)
@@ -173,6 +159,25 @@ Draw.prototype.draw = function(position, state, color, close) {
 			}
 			break;
 	}
+	
+	noBroadcast = noBroadcast || 0;
+	if (!noBroadcast && state != 2) {
+		// currently drawing
+		main.server.broadcast("board tmp", {
+			toolName: toolName,
+			position: position,
+			state: state,
+			color: color,
+			close: close
+		});
+	}
+};
+
+/**
+ * 
+ */
+Draw.prototype.broadcast = function(self, parameters) {
+	self.draw(parameters.toolName, parameters.position, parameters.state, parameters.color, parameters.close, 1);
 };
 
 /**
@@ -180,13 +185,13 @@ Draw.prototype.draw = function(position, state, color, close) {
  * board class.
  * @param {Object} history - Contains the whole "current" drawing.
  */
-Draw.prototype.redraw = function(history, toolName) {
+Draw.prototype.redraw = function(tmpHistory, toolName) {
 	debug.log("+ redraw: " + toolName);
-	var d = history.drawing;
+	var d = tmpHistory.drawing;
 	for (var i in d) {
-		this.draw(d[i].position, d[i].state, history.color);
+		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color);
 	}
 };
 
 // register tool in main
-main.registerTool("draw");
+main.registerTool(new Draw());
