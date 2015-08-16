@@ -169,7 +169,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 			break;
 	}
 	
-	if ((!userId || userId == -1) && state != 2) {
+	if (userId == 0 && state != 2) {
 		// currently drawing
 		main.server.broadcast("board tmp", {
 			toolName: toolName,
@@ -184,6 +184,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
  * 
  */
 Draw.prototype.broadcast = function(self, userId, parameters) {
+	console.log("from " + userId);
 	self.draw(parameters.toolName, parameters.position, parameters.state, parameters.color, userId);
 };
 
