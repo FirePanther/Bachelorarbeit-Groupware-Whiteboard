@@ -2,6 +2,10 @@
 
 .click-through { pointer-events: none; }
 
+.cursor { position: absolute; z-index: 100; }
+
+.cursor .pointer { background: url(../img/arrow.png); }
+
 .left { position: absolute; left: 0; top: 0; bottom: 0; }
 
 .toolbar { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); }

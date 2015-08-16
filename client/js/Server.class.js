@@ -5,7 +5,9 @@
 function Server() {
 	this.socket = io("http://tchost.de:24690");
 	this.userId = 0;
-	this.date = new Date();
+	
+	// difference between client and server time
+	this.diff = 0;
 };
 
 /**
@@ -25,12 +27,15 @@ Server.prototype.init = function() {
 			latency = (receiveTime - resp.clientTime),
 			estimatedServerTime = resp.serverTime + latency / 2,
 			diff = estimatedServerTime - receiveTime;
-		self.date = new Date(receiveTime + diff);
+		self.diff = diff;
 	});
 	
 	// on broadcast (when I get data from other users)
 	this.socket.on("*", function(resp) {
 		switch (resp.type) {
+			case "cursor":
+				main.cursor.move(resp.userId, resp.data.x, resp.data.y);
+				break;
 			case "board tmp":
 				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
 					toolObject = HistoryType.properties[toolId].toolObject;
@@ -54,7 +59,14 @@ Server.prototype.init = function() {
 Server.prototype.broadcast = function(type, data) {
 	this.socket.emit("*", {
 		type: type,
-		date: this.date.getTime(),
+		date: this.getTime(),
 		data: data
 	});
+};
+
+/**
+ * 
+ */
+Server.prototype.getTime = function() {
+	return new Date(new Date().getTime() + this.diff).getTime();
 };

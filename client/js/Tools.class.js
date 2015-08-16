@@ -153,9 +153,6 @@ Tools.prototype.selectTool = function(toolID) {
 	
 	console.log(this.registeredTools[toolID]);
 	
-	// deinit
-	for (var i in main.board.events) {
-		main.board.$board.off(main.board.events[i]);
-	}
+	main.board.$board.off(".tool");
 	this.registeredTools[toolID].toolObject.initEvents(this.registeredTools[toolID].toolName);
 };

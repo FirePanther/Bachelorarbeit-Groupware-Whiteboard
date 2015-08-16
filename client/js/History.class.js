@@ -36,7 +36,7 @@ function History(board) {
  */
 History.prototype.add = function(entry) {
 	var entry2 = entry;
-	var id = main.server.date.getTime() + "_" + hash(entry);
+	var id = main.server.getTime() + "_" + hash(entry);
 	entry2.own = true;
 	this.history[id] = entry2;
 	return {

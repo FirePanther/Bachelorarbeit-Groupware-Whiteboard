@@ -33,6 +33,7 @@ Main.prototype.init = function() {
 	
 	this.history = new History();
 	this.board = new Board($(".board"));
+	this.cursor = new Cursor();
 	
 	this.server.init();
 	this.tools.init();

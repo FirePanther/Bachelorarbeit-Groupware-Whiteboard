@@ -27,25 +27,24 @@ function Draw() {
  */
 Draw.prototype.initEvents = function(toolName) {
 	this.toolName = toolName;
-	main.board.events.push("mousedown", "mousemove", "mouseleave", "mouseenter", "mouseup");
 	
 	var self = this;
-	main.board.$board.on("mousedown", function(event) {
+	main.board.$board.on("mousedown.tool", function(event) {
 		// start drawing
 		self.drawAction(event, true);
-	}).on("mousemove", function(event) {
+	}).on("mousemove.tool", function(event) {
 		// still drawing
 		if (self.drawing[0] == 1) self.drawAction(event, false, false, 1);
-	}).on("mouseleave", function(event) {
+	}).on("mouseleave.tool", function(event) {
 		// pause drawing
 		if (self.drawing[0] == 1) {
 			self.drawAction(event, false, true, 2);
 			self.drawing[0] = 2;
 		}
-	}).on("mouseenter", function(event) {
+	}).on("mouseenter.tool", function(event) {
 		// continue drawing
 		if (self.drawing[0] == 2 && event.buttons == 1) self.drawAction(event, true, true);
-	}).on("mouseup", function(event) {
+	}).on("mouseup.tool", function(event) {
 		// stop drawing
 		if (self.drawing[0]) {
 			self.drawAction(event, false, false, 2);
@@ -143,14 +142,14 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 			// bevel (eckig), miter (spitz), round (rund)
 			curBoard.context.lineJoin = "round";
 			curBoard.context.lineCap = "round";
-			this.startPosition = position;
+			curBoard.cache.startPosition = position;
 			break;
 		// mouse move
 		case 1:
-			if (this.startPosition) {
+			if (curBoard.cache.startPosition) {
 				curBoard.context.beginPath();
-				curBoard.context.moveTo(this.startPosition[0], this.startPosition[1]);
-				this.startPosition = null;
+				curBoard.context.moveTo(curBoard.cache.startPosition[0], curBoard.cache.startPosition[1]);
+				delete curBoard.cache.startPosition;
 			}
 
 			curBoard.context.lineTo(position[0], position[1]);
@@ -158,7 +157,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 			break;
 		// mouse up
 		case 2:
-			if (this.startPosition === null) {
+			if (!curBoard.cache.startPosition) {
 				curBoard.context.lineTo(position[0], position[1]);
 				curBoard.context.stroke();
 			}

@@ -9,6 +9,15 @@
 	pointer-events: none;
 }
 
+.cursor {
+	position: absolute;
+	z-index: 100;
+	
+	.pointer {
+		background: url(../img/arrow.png);
+	}
+}
+
 .left {
 	position: absolute;
 	left: 0;

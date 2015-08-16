@@ -7,6 +7,7 @@ function Board($board) {
 	this.context = null;
 	this.tools = {};
 	this.events = [];
+	this.cache = {};
 	
 	$board = $board || 0;
 	
@@ -25,8 +26,7 @@ Board.prototype.tmpBoard = function(boardId) {
 	if (!this.tmpBoards[boardId]) {
 		// create
 		var $canvas = $('<canvas class="board fullscreen click-through" id="board_' + boardId + '"/>');
-		$canvas.attr({
-			left: main.tools.toolbarWidth,
+		$canvas.css("left", main.tools.toolbarWidth + "px").attr({
 			width: window.innerWidth - main.tools.toolbarWidth,
 			height: window.innerHeight
 		});
@@ -35,6 +35,7 @@ Board.prototype.tmpBoard = function(boardId) {
 			temporary: true,
 			$element: $canvas,
 			context: $canvas[0].getContext("2d"),
+			cache: {},
 			remove: (function(self, boardId) {
 				return function() {
 					self.removeTmpBoard(boardId);
@@ -68,8 +69,7 @@ Board.prototype.setBoard = function($board) {
  * Resizes the canvas element to the window size.
  */
 Board.prototype.resize = function() {
-	this.$board.attr({
-		left: main.tools.toolbarWidth,
+	this.$board.css("left", main.tools.toolbarWidth).attr({
 		width: window.innerWidth - main.tools.toolbarWidth,
 		height: window.innerHeight
 	});
