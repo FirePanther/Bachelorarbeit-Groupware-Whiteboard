@@ -4,6 +4,7 @@
  */
 function Server() {
 	this.socket = io("http://tchost.de:24690");
+	this.userId = 0;
 	this.date = new Date();
 };
 
@@ -12,6 +13,11 @@ function Server() {
  */
 Server.prototype.init = function() {
 	var self = this;
+	
+	// userId
+	this.socket.on("userId", function(resp) {
+		self.userId = resp;
+	});
 	
 	// "date" is for getting the server time
 	this.socket.on("date", function(resp) {
@@ -28,14 +34,12 @@ Server.prototype.init = function() {
 			case "board tmp":
 				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
 					toolObject = HistoryType.properties[toolId].toolObject;
-				console.log(resp.data);
-				toolObject.broadcast(toolObject, resp.data);
-				// todo: 0 = userId
-				//main.history.tmp[0] = resp.data;
+				toolObject.broadcast(toolObject, resp.userId, resp.data);
+				//main.history.tmp[resp.userId] = resp.data;
 				break;
 			case "board":
-			console.log(resp);
 				main.history.addById(resp.data.id, false, resp.data.entry);
+				main.board.redraw();
 				break;
 		}
 	});

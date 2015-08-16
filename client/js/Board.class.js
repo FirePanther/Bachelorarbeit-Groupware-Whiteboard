@@ -9,7 +9,48 @@ function Board($board) {
 	this.events = [];
 	
 	$board = $board || 0;
+	
+	// temporary
+	this.temporary = false;
+	this.$tmpBoards = $(".tmpBoards");
+	this.tmpBoards = {};
+	
 	if ($board !== 0 && $board.length) this.setBoard($board);
+};
+
+/**
+ * Creates a temporary board (e.g. for temporary drawings by users)
+ */
+Board.prototype.tmpBoard = function(boardId) {
+	if (!this.tmpBoards[boardId]) {
+		// create
+		var $canvas = $('<canvas class="board fullscreen click-through" id="board_' + boardId + '"/>');
+		$canvas.attr({
+			left: main.tools.toolbarWidth,
+			width: window.innerWidth - main.tools.toolbarWidth,
+			height: window.innerHeight
+		});
+		this.$tmpBoards.append($canvas);
+		this.tmpBoards[boardId] = {
+			temporary: true,
+			$element: $canvas,
+			context: $canvas[0].getContext("2d"),
+			remove: (function(self, boardId) {
+				return function() {
+					self.removeTmpBoard(boardId);
+				};
+			})(this, boardId)
+		};
+	}
+	return this.tmpBoards[boardId];
+};
+
+/**
+ * Removes the element and the item
+ */
+Board.prototype.removeTmpBoard = function(boardId) {
+	this.tmpBoards[boardId].$element.remove();
+	delete this.tmpBoards[boardId];
 };
 
 /**

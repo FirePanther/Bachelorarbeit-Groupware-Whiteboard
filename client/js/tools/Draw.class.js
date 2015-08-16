@@ -4,7 +4,7 @@
  * @param {jQuery} [$board] - The canvas jQuery element.
  */
 function Draw() {
-	this.drawing = 0;
+	this.drawing = {};
 	
 	this.toolSettings = {
 		pencil: {
@@ -35,21 +35,21 @@ Draw.prototype.initEvents = function(toolName) {
 		self.drawAction(event, true);
 	}).on("mousemove", function(event) {
 		// still drawing
-		if (self.drawing == 1) self.drawAction(event, false, false, 1);
+		if (self.drawing[0] == 1) self.drawAction(event, false, false, 1);
 	}).on("mouseleave", function(event) {
 		// pause drawing
-		if (self.drawing == 1) {
+		if (self.drawing[0] == 1) {
 			self.drawAction(event, false, true, 2);
-			self.drawing = 2;
+			self.drawing[0] = 2;
 		}
 	}).on("mouseenter", function(event) {
 		// continue drawing
-		if (self.drawing == 2 && event.buttons == 1) self.drawAction(event, true, true);
+		if (self.drawing[0] == 2 && event.buttons == 1) self.drawAction(event, true, true);
 	}).on("mouseup", function(event) {
 		// stop drawing
-		if (self.drawing) {
+		if (self.drawing[0]) {
 			self.drawAction(event, false, false, 2);
-			self.drawing = 0;
+			self.drawing[0] = 0;
 		}
 	});
 };
@@ -66,7 +66,7 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 	doCorrectByDirection = doCorrectByDirection || false;
 	setState = setState || 0;
 	
-	this.drawing = 1;
+	this.drawing[0] = 1;
 	if (begin) {
 		this.tmpHistory = [];
 	}
@@ -117,59 +117,65 @@ Draw.prototype.addHistory = function(toolName, position, state) {
  * @param {integer} state.2 - mouse is up
  * @param ...
  */
-Draw.prototype.draw = function(toolName, position, state, color, close, noBroadcast) {
-	close = close || 0;
+Draw.prototype.draw = function(toolName, position, state, color, userId) {
+	userId = userId || 0; // 0 = own, -1 = not important (e.g. redraw)
+	
+	var curBoard = (userId == -1 ? main.board : main.board.tmpBoard(userId));
+	
 	switch (state) {
 		// mouse down
 		case 0:
 			switch (toolName) {
 				case "brush":
-					main.board.context.lineWidth = 5;
+					curBoard.context.lineWidth = 5;
 					break;
 				case "pencil":
-					main.board.context.lineWidth = 1;
+					curBoard.context.lineWidth = 1;
 					break;
 			}
 			
-		
-			main.board.context.strokeStyle = main.tools.getColor(color);
+			if (/^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(color)) {
+				curBoard.context.strokeStyle = color;
+			} else {
+				curBoard.context.strokeStyle = main.tools.getColor(color);
+			}
 			
 			// bevel (eckig), miter (spitz), round (rund)
-			main.board.context.lineJoin = "round";
-			main.board.context.lineCap = "round";
+			curBoard.context.lineJoin = "round";
+			curBoard.context.lineCap = "round";
 			this.startPosition = position;
 			break;
 		// mouse move
 		case 1:
 			if (this.startPosition) {
-				main.board.context.beginPath();
-				main.board.context.moveTo(this.startPosition[0], this.startPosition[1]);
+				curBoard.context.beginPath();
+				curBoard.context.moveTo(this.startPosition[0], this.startPosition[1]);
 				this.startPosition = null;
 			}
-			main.board.context.lineTo(position[0], position[1]);
-			main.board.context.stroke();
+
+			curBoard.context.lineTo(position[0], position[1]);
+			curBoard.context.stroke();
 			break;
 		// mouse up
 		case 2:
 			if (this.startPosition === null) {
-				main.board.context.lineTo(position[0], position[1]);
-				if (close) {
-					main.board.context.closePath();
-				}
-				main.board.context.stroke();
+				curBoard.context.lineTo(position[0], position[1]);
+				curBoard.context.stroke();
+			}
+			if (curBoard.temporary) {
+				curBoard.remove();
+				main.board.context.drawImage(curBoard.$element[0], 0, 0);
 			}
 			break;
 	}
 	
-	noBroadcast = noBroadcast || 0;
-	if (!noBroadcast && state != 2) {
+	if ((!userId || userId == -1) && state != 2) {
 		// currently drawing
 		main.server.broadcast("board tmp", {
 			toolName: toolName,
 			position: position,
 			state: state,
-			color: main.board.context.strokeStyle,
-			close: close
+			color: curBoard.context.strokeStyle
 		});
 	}
 };
@@ -177,8 +183,8 @@ Draw.prototype.draw = function(toolName, position, state, color, close, noBroadc
 /**
  * 
  */
-Draw.prototype.broadcast = function(self, parameters) {
-	self.draw(parameters.toolName, parameters.position, parameters.state, parameters.color, parameters.close, 1);
+Draw.prototype.broadcast = function(self, userId, parameters) {
+	self.draw(parameters.toolName, parameters.position, parameters.state, parameters.color, userId);
 };
 
 /**
@@ -190,7 +196,7 @@ Draw.prototype.redraw = function(tmpHistory, toolName) {
 	debug.log("+ redraw: " + toolName);
 	var d = tmpHistory.drawing;
 	for (var i in d) {
-		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color, 0, 1);
+		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color, -1);
 	}
 };
 

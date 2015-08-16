@@ -110,8 +110,6 @@ Tools.prototype.getColor = function(colorID) {
 		} else {
 			return this.colorIDs[this.options.color];
 		}
-	} else if (/^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(colorID)) {
-		return colorID;
 	} else {
 		return this.colorIDs[colorID];
 	}

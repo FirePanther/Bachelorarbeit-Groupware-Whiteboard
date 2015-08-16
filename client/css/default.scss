@@ -5,6 +5,10 @@
 	bottom: 0;
 }
 
+.click-through {
+	pointer-events: none;
+}
+
 .left {
 	position: absolute;
 	left: 0;

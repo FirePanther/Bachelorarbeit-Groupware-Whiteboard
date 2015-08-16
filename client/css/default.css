@@ -1,5 +1,7 @@
 .fullscreen { position: absolute; top: 0; right: 0; bottom: 0; }
 
+.click-through { pointer-events: none; }
+
 .left { position: absolute; left: 0; top: 0; bottom: 0; }
 
 .toolbar { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); }
