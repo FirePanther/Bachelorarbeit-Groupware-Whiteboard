@@ -28,12 +28,14 @@ Server.prototype.init = function() {
 			case "board tmp":
 				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
 					toolObject = HistoryType.properties[toolId].toolObject;
+				console.log(resp.data);
 				toolObject.broadcast(toolObject, resp.data);
 				// todo: 0 = userId
 				//main.history.tmp[0] = resp.data;
 				break;
 			case "board":
-				main.history.addById(resp.id, false, resp.data);
+			console.log(resp);
+				main.history.addById(resp.data.id, false, resp.data.entry);
 				break;
 		}
 	});
@@ -41,7 +43,6 @@ Server.prototype.init = function() {
 	// ask for the server time
 	this.socket.emit("date", new Date().getTime());
 };
-
 
 /**
  * 

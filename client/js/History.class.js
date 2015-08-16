@@ -35,9 +35,10 @@ function History(board) {
  * @param {integer} entry.type - The type of the object by the HistoryType enum.
  */
 History.prototype.add = function(entry) {
+	var entry2 = entry;
 	var id = main.server.date.getTime() + "_" + hash(entry);
-	entry.own = true;
-	this.history[id] = entry;
+	entry2.own = true;
+	this.history[id] = entry2;
 	return {
 		id: id,
 		entry: entry

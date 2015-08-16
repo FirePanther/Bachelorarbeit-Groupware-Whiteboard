@@ -58,12 +58,12 @@ Draw.prototype.initEvents = function(toolName) {
  * Saves the whole "draw" action.
  * @param {Object} event - The mouse event.
  * @param {boolean} [begin=false] - Is this the beginning of the drawing? (e.g. for mousedown and mouseenter)
- * @oaram {boolean} [correctByDirection=false] - Should the event offset be corrected? (e.g. for mouseenter and mouseleave)
+ * @oaram {boolean} [doCorrectByDirection=false] - Should the event offset be corrected? (e.g. for mouseenter and mouseleave)
  * @param {integer} [setState=0] - The state of the mouse (see state@"Draw::addHistory" or state@"Draw::draw").
  */
-Draw.prototype.drawAction = function(event, begin, correctByDirection, setState) {
+Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setState) {
 	begin = begin || false;
-	correctByDirection = correctByDirection || false;
+	doCorrectByDirection = doCorrectByDirection || false;
 	setState = setState || 0;
 	
 	this.drawing = 1;
@@ -71,7 +71,7 @@ Draw.prototype.drawAction = function(event, begin, correctByDirection, setState)
 		this.tmpHistory = [];
 	}
 	
-	if (correctByDirection) event = correctByDirection(event);
+	if (doCorrectByDirection) event = correctByDirection(event);
 	var position = [event.offsetX, event.offsetY];
 	
 	this.addHistory(this.toolName, position, setState);
@@ -130,6 +130,7 @@ Draw.prototype.draw = function(toolName, position, state, color, close, noBroadc
 					main.board.context.lineWidth = 1;
 					break;
 			}
+			
 		
 			main.board.context.strokeStyle = main.tools.getColor(color);
 			
@@ -167,7 +168,7 @@ Draw.prototype.draw = function(toolName, position, state, color, close, noBroadc
 			toolName: toolName,
 			position: position,
 			state: state,
-			color: color,
+			color: main.board.context.strokeStyle,
 			close: close
 		});
 	}
@@ -189,7 +190,7 @@ Draw.prototype.redraw = function(tmpHistory, toolName) {
 	debug.log("+ redraw: " + toolName);
 	var d = tmpHistory.drawing;
 	for (var i in d) {
-		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color);
+		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color, 0, 1);
 	}
 };
 
