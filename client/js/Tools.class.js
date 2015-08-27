@@ -12,6 +12,7 @@ var ToolSettingType = {
 function Tools() {
 	this.toolbarWidth = 80;
 	this.registeredTools = [];
+	this.selectedTool = null;
 	
 	this.options = {
 		color: null
@@ -154,5 +155,9 @@ Tools.prototype.selectTool = function(toolID) {
 	console.log(this.registeredTools[toolID]);
 	
 	main.board.$board.off(".tool");
+	if (this.selectedTool && this.selectedTool.deinitEvents) {
+		this.selectedTool.deinitEvents();
+	}
 	this.registeredTools[toolID].toolObject.initEvents(this.registeredTools[toolID].toolName);
+	this.selectedTool = this.registeredTools[toolID].toolObject;
 };

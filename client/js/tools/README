@@ -1,0 +1,17 @@
+The tool needs:
+	this.toolSettings = {
+		tool1: {
+			icon: 'HTML',
+			settings: {
+				type: ToolSettingType.X,
+				option1: {},
+				option2: {},
+				optionN: {}
+			}
+		}
+	};
+
+Method:
+	initEvents = function(toolName)
+	broadcast = function(userId, parameters)
+	redraw = function(tmpHistory, toolName)

@@ -165,6 +165,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 				if (userId == 0) {
 					main.board.context.drawImage(curBoard.$element[0], 0, 0);
 					main.board.drawed = true;
+					curBoard.remove();
 				} else {
 					// foreign drawing
 					var wholeBoard;
@@ -176,8 +177,9 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 						wholeBoard = main.board.tmpBoard(main.board.wholeBoards, true);
 					}
 					wholeBoard.context.drawImage(curBoard.$element[0], 0, 0);
+					
+					// don't remove curBoard, until next request (@see Server.class)
 				}
-				curBoard.remove();
 			}
 			break;
 	}
@@ -185,10 +187,10 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 	if (userId == 0) {
 		// currently drawing
 		main.server.broadcast("board tmp", {
-			t: toolName,
+			toolName: toolName,
 			p: position,
 			s: state,
-			c: curBoard.context.strokeStyle
+			color: curBoard.context.strokeStyle
 		});
 	}
 };
@@ -197,7 +199,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
  * 
  */
 Draw.prototype.broadcast = function(self, userId, parameters) {
-	self.draw(parameters.t, parameters.p, parameters.s, parameters.c, userId);
+	this.draw(parameters.toolName, parameters.p, parameters.s, parameters.color, userId);
 };
 
 /**
@@ -209,7 +211,7 @@ Draw.prototype.redraw = function(tmpHistory, toolName) {
 	debug.log("+ redraw: " + toolName);
 	var d = tmpHistory.drawing;
 	for (var i in d) {
-		this.draw(d[i].toolName, d[i].position, d[i].state, tmpHistory.color, -1);
+		this.draw(toolName, d[i].p, d[i].s, tmpHistory.color, -1);
 	}
 };
 

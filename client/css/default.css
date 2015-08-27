@@ -16,6 +16,26 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 
 .left { position: absolute; left: 0; top: 0; bottom: 0; }
 
+body.toolText .toolTextfield:not(.focus) { box-shadow: 0 0 10px rgba(90, 90, 90, 0.5); }
+
+body:not(.toolText) .toolTextfield { pointer-events: none; }
+
+.toolTextfield { position: absolute; padding: 3px; cursor: pointer; border-radius: 3px; }
+
+.toolTextfield.focus { box-shadow: 0 0 10px #0ec664, 0 0 15px #ed1329; background-color: white; }
+
+.toolTextfield.focus label { opacity: 0; }
+
+.toolTextfield:not(.focus) textarea { display: none; }
+
+.toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background: transparent; resize: none; font-size: 20px; font-family: verdana; }
+
+.toolTextfield label { white-space: pre; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+
+.toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
+
+.toolTextfield textarea { float: left; }
+
 .toolbar .selected { padding: 2px !important; box-shadow: rgba(255, 255, 255, 0.7) 0 0 2px 1px inset !important; }
 
 .toolbar > * { margin: 10px 0; padding: 2px; }
@@ -27,6 +47,8 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 .toolbar .tools .tool { border-radius: 10px; text-align: center; }
 
 .toolbar .tools .tool img { max-width: 100%; max-height: 100%; }
+
+.toolbar .tools .tool .toolText { color: white; font-family: times; font-size: 24px; }
 
 .toolbar .colors .colorpicker { box-sizing: border-box; width: 100%; height: 31px; text-transform: uppercase; margin-bottom: 3px; }
 

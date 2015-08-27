@@ -37,13 +37,14 @@ Server.prototype.init = function() {
 				main.cursor.move(resp.userId, resp.data.x, resp.data.y);
 				break;
 			case "board tmp":
-				var toolId = HistoryType[resp.data.t.toUpperCase()],
+			console.log(resp);
+				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
 					toolObject = HistoryType.properties[toolId].toolObject;
-				toolObject.broadcast(toolObject, resp.userId, resp.data);
-				//main.history.tmp[resp.userId] = resp.data;
+				toolObject.broadcast.apply(toolObject, [ resp.userId, resp.data ]);
 				break;
 			case "board":
 				main.board.drawed = false;
+				console.log(resp);
 				
 				var lastEntry = main.history.last();
 				if (!lastEntry || !lastEntry.whole || lastEntry.index !== main.board.wholeBoards) {
@@ -53,7 +54,12 @@ Server.prototype.init = function() {
 						index: main.board.wholeBoards
 					});
 				}
-				main.board.redraw();
+				
+				var h = resp.data.entry;
+				HistoryType.properties[h.type].toolObject.redraw(h, HistoryType.properties[h.type].toolName);
+				
+				main.board.tmpBoard(resp.userId).remove();
+				//main.board.context.drawImage(main.board.tmpBoard(main.board.wholeBoards, true).$element[0], 0, 0);
 				break;
 		}
 	});
