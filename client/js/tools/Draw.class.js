@@ -73,13 +73,14 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 	if (doCorrectByDirection) event = correctByDirection(event);
 	var position = [event.offsetX, event.offsetY];
 	
-	this.addHistory(this.toolName, position, setState);
+	this.addHistory(position, setState);
 	this.draw(this.toolName, position, setState);
 	
 	if (setState == 2) {
 		// finished the current drawing
 		var history = main.history.add({
 			type: HistoryType[this.toolName.toUpperCase()],
+			toolName: this.toolName,
 			drawing: this.tmpHistory,
 			color: main.tools.options.color
 		});
@@ -97,11 +98,10 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
  */
-Draw.prototype.addHistory = function(toolName, position, state) {
+Draw.prototype.addHistory = function(position, state) {
 	this.tmpHistory.push({
-		toolName: toolName,
-		position: position,
-		state: state
+		p: position,
+		s: state
 	});
 };
 
@@ -162,8 +162,22 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 				curBoard.context.stroke();
 			}
 			if (curBoard.temporary) {
+				if (userId == 0) {
+					main.board.context.drawImage(curBoard.$element[0], 0, 0);
+					main.board.drawed = true;
+				} else {
+					// foreign drawing
+					var wholeBoard;
+					if (main.board.drawed) {
+						// create new wholeBoard
+						wholeBoard = main.board.tmpBoard(null, true); // create a whole board
+					} else {
+						// get last wholeBoard
+						wholeBoard = main.board.tmpBoard(main.board.wholeBoards, true);
+					}
+					wholeBoard.context.drawImage(curBoard.$element[0], 0, 0);
+				}
 				curBoard.remove();
-				main.board.context.drawImage(curBoard.$element[0], 0, 0);
 			}
 			break;
 	}
@@ -171,10 +185,10 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 	if (userId == 0) {
 		// currently drawing
 		main.server.broadcast("board tmp", {
-			toolName: toolName,
-			position: position,
-			state: state,
-			color: curBoard.context.strokeStyle
+			t: toolName,
+			p: position,
+			s: state,
+			c: curBoard.context.strokeStyle
 		});
 	}
 };
@@ -183,8 +197,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
  * 
  */
 Draw.prototype.broadcast = function(self, userId, parameters) {
-	console.log(parameters.state);
-	self.draw(parameters.toolName, parameters.position, parameters.state, parameters.color, userId);
+	self.draw(parameters.t, parameters.p, parameters.s, parameters.c, userId);
 };
 
 /**

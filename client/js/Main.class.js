@@ -32,7 +32,7 @@ Main.prototype.init = function() {
 	debug.log("+ Main init");
 	
 	this.history = new History();
-	this.board = new Board($(".board"));
+	this.board = new Board($("#visibleBoard"));
 	this.cursor = new Cursor();
 	
 	this.server.init();

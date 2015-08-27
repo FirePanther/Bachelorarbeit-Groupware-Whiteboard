@@ -1,3 +1,7 @@
+// settings
+var BOARDMAXWIDTH = 5120,
+	BOARDMAXHEIGHT = 2880;
+
 var debug = new Debug(),
 	main = new Main();
 $(function() {

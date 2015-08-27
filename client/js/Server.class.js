@@ -37,13 +37,22 @@ Server.prototype.init = function() {
 				main.cursor.move(resp.userId, resp.data.x, resp.data.y);
 				break;
 			case "board tmp":
-				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
+				var toolId = HistoryType[resp.data.t.toUpperCase()],
 					toolObject = HistoryType.properties[toolId].toolObject;
 				toolObject.broadcast(toolObject, resp.userId, resp.data);
 				//main.history.tmp[resp.userId] = resp.data;
 				break;
 			case "board":
-				main.history.addById(resp.data.id, false, resp.data.entry);
+				main.board.drawed = false;
+				
+				var lastEntry = main.history.last();
+				if (!lastEntry || !lastEntry.whole || lastEntry.index !== main.board.wholeBoards) {
+					// add if not added already
+					main.history.addById(resp.data.id, false, {
+						whole: true,
+						index: main.board.wholeBoards
+					});
+				}
 				main.board.redraw();
 				break;
 		}

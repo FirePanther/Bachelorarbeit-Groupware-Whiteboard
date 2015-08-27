@@ -54,6 +54,14 @@ History.prototype.addById = function(id, own, entry) {
 };
 
 /**
+ *
+ */
+History.prototype.last = function() {
+	var keys = Object.keys(this.history);
+	return this.history[keys[keys.length - 1]];
+};
+
+/**
  * 
  */
 History.prototype.registerTool = function(toolObject, toolName) {
