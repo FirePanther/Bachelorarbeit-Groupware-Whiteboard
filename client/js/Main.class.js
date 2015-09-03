@@ -16,9 +16,6 @@ function Main() {
 	this.server = new Server();
 	this.tools = new Tools();
 	
-	// contains all tools with the toolNr as key and the object as value
-	//this.registeredTools = {};
-	
 	// the todo list of all tools to register
 	this.registerToolToDo = [];
 	
