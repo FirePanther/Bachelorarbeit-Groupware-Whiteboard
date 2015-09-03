@@ -71,5 +71,6 @@ History.prototype.registerTool = function(toolObject, toolName) {
 		toolObject: toolObject,
 		toolName: toolName
 	};
+	return HistoryType.properties.index;
 };
 

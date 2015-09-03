@@ -117,8 +117,8 @@ Board.prototype.redraw = function() {
 		h = main.history.history[i];
 		if (h.whole) {
 			this.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
-		} else if (HistoryType.properties[h.type]) {
-			HistoryType.properties[h.type].toolObject.redraw(h, HistoryType.properties[h.type].toolName);
+		} else if (HistoryType.properties[h.toolNr]) {
+			HistoryType.properties[h.toolNr].toolObject.redraw(h, h.toolNr);
 		}
 	}
 };

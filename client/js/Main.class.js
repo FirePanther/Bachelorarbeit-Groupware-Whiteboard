@@ -16,8 +16,8 @@ function Main() {
 	this.server = new Server();
 	this.tools = new Tools();
 	
-	// contains all tools with the toolName as key and the object as value
-	this.registeredTools = {};
+	// contains all tools with the toolNr as key and the object as value
+	//this.registeredTools = {};
 	
 	// the todo list of all tools to register
 	this.registerToolToDo = [];
@@ -51,20 +51,17 @@ Main.prototype.init = function() {
 };
 
 /**
- * Registers an object in the Main object.
- * @param {string} toolName - The name of the tool (of the class).
  */
 Main.prototype.registerTool = function(toolObject) {
 	if (this.initialized) {
-		var toolClassName = toolObject.constructor.name;
+		var toolClassName = toolObject.constructor.name,
+			toolNr;
 		debug.log("+ Main registering tool: " + toolClassName + ".class");
 		
-		this.registeredTools[toolClassName] = toolObject;
-
 		if (toolObject.toolSettings) {
-			for (var i in toolObject.toolSettings) {
-				this.history.registerTool(toolObject, i);
-				this.tools.registerTool(toolObject, i);
+			for (var toolName in toolObject.toolSettings) {
+				toolNr = this.history.registerTool(toolObject, toolName);
+				this.tools.registerTool(toolNr);
 			}
 		}
 		

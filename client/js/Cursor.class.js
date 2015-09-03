@@ -5,7 +5,7 @@ function Cursor() {
 	this.$cursors = $(".cursors");
 	this.cursors = {};
 	
-	main.board.$board.on("mousemove.cursor", this.broadcast);
+	$(window).on("mousemove.cursor", this.broadcast);
 };
 
 /**
@@ -16,7 +16,7 @@ Cursor.prototype.move = function(cursorId, x, y) {
 		this.cursors[cursorId].x = x;
 		this.cursors[cursorId].y = y;
 		this.cursors[cursorId].$element.css({
-			left: main.tools.toolbarWidth + x,
+			left: x,
 			top: y
 		});
 	} else {
@@ -25,7 +25,7 @@ Cursor.prototype.move = function(cursorId, x, y) {
 			$label = $('<div class="cursorLabel" />'),
 			$pointer = $('<div class="pointer" />');
 		$div.css({
-			left: (main.tools.toolbarWidth + x) + "px",
+			left: x + "px",
 			top: y + "px"
 		});
 		$label.text(cursorId);
@@ -58,7 +58,7 @@ Cursor.prototype.removeCursor = function(cursorId) {
  */
 Cursor.prototype.broadcast = function(event) {
 	main.server.broadcast("cursor", {
-		x: event.offsetX,
-		y: event.offsetY
+		x: event.pageX,
+		y: event.pageY
 	});
 };

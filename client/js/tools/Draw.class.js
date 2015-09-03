@@ -25,8 +25,8 @@ function Draw() {
 /**
  * Initializes the mouse events for the board.
  */
-Draw.prototype.initEvents = function(toolName) {
-	this.toolName = toolName;
+Draw.prototype.initEvents = function(toolNr) {
+	this.toolNr = toolNr;
 	
 	var self = this;
 	main.board.$board.on("mousedown.tool", function(event) {
@@ -74,13 +74,12 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 	var position = [event.offsetX, event.offsetY];
 	
 	this.addHistory(position, setState);
-	this.draw(this.toolName, position, setState);
+	this.draw(this.toolNr, position, setState);
 	
 	if (setState == 2) {
 		// finished the current drawing
 		var history = main.history.add({
-			type: HistoryType[this.toolName.toUpperCase()],
-			toolName: this.toolName,
+			toolNr: this.toolNr,
 			drawing: this.tmpHistory,
 			color: main.tools.options.color
 		});
@@ -116,7 +115,7 @@ Draw.prototype.addHistory = function(position, state) {
  * @param {integer} state.2 - mouse is up
  * @param ...
  */
-Draw.prototype.draw = function(toolName, position, state, color, userId) {
+Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 	userId = userId || 0; // 0 = own, -1 = not important (e.g. redraw)
 	
 	var curBoard = (userId == -1 ? main.board : main.board.tmpBoard(userId));
@@ -124,11 +123,11 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 	switch (state) {
 		// mouse down
 		case 0:
-			switch (toolName) {
-				case "brush":
+			switch (toolNr) {
+				case HistoryType.BRUSH:
 					curBoard.context.lineWidth = 5;
 					break;
-				case "pencil":
+				case HistoryType.PENCIL:
 					curBoard.context.lineWidth = 1;
 					break;
 			}
@@ -187,7 +186,7 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 	if (userId == 0) {
 		// currently drawing
 		main.server.broadcast("board tmp", {
-			toolName: toolName,
+			toolNr: toolNr,
 			p: position,
 			s: state,
 			color: curBoard.context.strokeStyle
@@ -198,8 +197,9 @@ Draw.prototype.draw = function(toolName, position, state, color, userId) {
 /**
  * 
  */
-Draw.prototype.broadcast = function(self, userId, parameters) {
-	this.draw(parameters.toolName, parameters.p, parameters.s, parameters.color, userId);
+Draw.prototype.broadcast = function(userId, parameters) {
+	console.log(parameters);
+	this.draw(parameters.toolNr, parameters.p, parameters.s, parameters.color, userId);
 };
 
 /**
@@ -207,11 +207,11 @@ Draw.prototype.broadcast = function(self, userId, parameters) {
  * board class.
  * @param {Object} history - Contains the whole "current" drawing.
  */
-Draw.prototype.redraw = function(tmpHistory, toolName) {
-	debug.log("+ redraw: " + toolName);
-	var d = tmpHistory.drawing;
+Draw.prototype.redraw = function(history) {
+	debug.log("+ redraw: " + history.toolNr);
+	var d = history.drawing;
 	for (var i in d) {
-		this.draw(toolName, d[i].p, d[i].s, tmpHistory.color, -1);
+		this.draw(history.toolNr, d[i].p, d[i].s, history.color, -1);
 	}
 };
 

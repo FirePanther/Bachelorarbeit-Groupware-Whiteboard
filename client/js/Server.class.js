@@ -4,6 +4,10 @@
  */
 function Server() {
 	this.socket = io("http://tchost.de:24690");
+	
+	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
+	this.socket.io.reconnection(false);
+	
 	this.userId = 0;
 	
 	// difference between client and server time
@@ -37,9 +41,9 @@ Server.prototype.init = function() {
 				main.cursor.move(resp.userId, resp.data.x, resp.data.y);
 				break;
 			case "board tmp":
-			console.log(resp);
-				var toolId = HistoryType[resp.data.toolName.toUpperCase()],
-					toolObject = HistoryType.properties[toolId].toolObject;
+				console.log(resp);
+				var toolNr = resp.data.toolNr,
+					toolObject = HistoryType.properties[toolNr].toolObject;
 				toolObject.broadcast.apply(toolObject, [ resp.userId, resp.data ]);
 				break;
 			case "board":
@@ -56,10 +60,9 @@ Server.prototype.init = function() {
 				}
 				
 				var h = resp.data.entry;
-				HistoryType.properties[h.type].toolObject.redraw(h, HistoryType.properties[h.type].toolName);
+				HistoryType.properties[h.toolNr].toolObject.redraw(h);
 				
 				main.board.tmpBoard(resp.userId).remove();
-				//main.board.context.drawImage(main.board.tmpBoard(main.board.wholeBoards, true).$element[0], 0, 0);
 				break;
 		}
 	});

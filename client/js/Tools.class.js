@@ -11,7 +11,6 @@ var ToolSettingType = {
  */
 function Tools() {
 	this.toolbarWidth = 80;
-	this.registeredTools = [];
 	this.selectedTool = null;
 	
 	this.options = {
@@ -74,30 +73,24 @@ Tools.prototype.initColors = function() {
 /**
  * 
  */
-Tools.prototype.registerTool = function(toolObject, toolName) {
+Tools.prototype.registerTool = function(toolNr) {
 	debug.log("registering");
 	
-	var toolID = this.registeredTools.length;
-	
-	this.registeredTools.push({
-		toolObject: toolObject,
-		toolName: toolName,
-	});
-	
-	var settings = toolObject.toolSettings[toolName];
+	var toolName = HistoryType.properties[toolNr].toolName,
+		settings = HistoryType.properties[toolNr].toolObject.toolSettings[toolName];
 	
 	// the tool icon in the toolbar
-	this["$tool" + toolID] = $("<div class=\"tool " + toolName + "\" data-tool-id=\"" + toolID + "\">" + settings.icon + "</div>");
-	this["$tool" + toolID].click((function(self, toolID) {
+	this["$tool" + toolNr] = $("<div class=\"tool " + toolName + "\" data-tool-id=\"" + toolNr + "\">" + settings.icon + "</div>");
+	this["$tool" + toolNr].click((function(self, toolNr) {
 		return function() {
-			self.selectTool(toolID);
+			self.selectTool(toolNr);
 		};
-	})(this, toolID));
-	this.$tools.append(this["$tool" + toolID]);
+	})(this, toolNr));
+	this.$tools.append(this["$tool" + toolNr]);
 	
-	if (!toolID) {
+	if (toolNr == 1) {
 		// select first tool
-		this.selectTool(0);
+		this.selectTool(1);
 	}
 };
 
@@ -146,18 +139,16 @@ Tools.prototype.selectColor = function(color) {
 /**
  * 
  */
-Tools.prototype.selectTool = function(toolID) {
+Tools.prototype.selectTool = function(toolNr) {
 	this.$tools.find(".selected").removeClass("selected");
-	this["$tool" + toolID].addClass("selected");
+	this["$tool" + toolNr].addClass("selected");
 	
-	this.options.tool = parseInt(toolID);
-	
-	console.log(this.registeredTools[toolID]);
-	
+	this.options.tool = parseInt(toolNr);
+		
 	main.board.$board.off(".tool");
 	if (this.selectedTool && this.selectedTool.deinitEvents) {
 		this.selectedTool.deinitEvents();
 	}
-	this.registeredTools[toolID].toolObject.initEvents(this.registeredTools[toolID].toolName);
-	this.selectedTool = this.registeredTools[toolID].toolObject;
+	HistoryType.properties[toolNr].toolObject.initEvents(toolNr);
+	this.selectedTool = HistoryType.properties[toolNr].toolObject;
 };

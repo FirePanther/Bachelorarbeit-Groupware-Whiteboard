@@ -8,6 +8,20 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 
 .click-through { pointer-events: none; }
 
+.selection { transition: all linear 50ms; position: absolute; z-index: 90; }
+
+.selection .top, .selection .bottom { background: url(../img/border_horizontal.gif) repeat-x; position: absolute; height: 1px; left: 0; right: 0; }
+
+.selection .left, .selection .right { background: url(../img/border_vertical.gif) repeat-y; position: absolute; width: 1px; top: 0; bottom: 0; }
+
+.selection .top { top: -1px; }
+
+.selection .right { right: -1px; }
+
+.selection .bottom { bottom: -1px; }
+
+.selection .left { left: -1px; }
+
 .cursor { position: absolute; z-index: 100; }
 
 .cursor .cursorLabel { font-family: verdana; font-size: 8px; position: absolute; left: 14px; }
@@ -16,25 +30,37 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 
 .left { position: absolute; left: 0; top: 0; bottom: 0; }
 
-body.toolText .toolTextfield:not(.focus) { box-shadow: 0 0 10px rgba(90, 90, 90, 0.5); }
-
 body:not(.toolText) .toolTextfield { pointer-events: none; }
 
-.toolTextfield { position: absolute; padding: 3px; cursor: pointer; border-radius: 3px; }
+body:not(.toolText) .toolTextfield .textselector:not(.dontHide) { display: none; }
 
-.toolTextfield.focus { box-shadow: 0 0 10px #0ec664, 0 0 15px #ed1329; background-color: white; }
+.toolTextfield { position: absolute; padding: 3px; cursor: pointer; border-radius: 3px; z-index: 1; /* dashed border (not animated) */ }
+
+.toolTextfield .textselector { opacity: .3; position: absolute; }
+
+.toolTextfield .top, .toolTextfield .bottom { background: url(../img/border_horizontal.jpg) repeat-x; height: 1px; left: 0; right: 0; }
+
+.toolTextfield .left, .toolTextfield .right { background: url(../img/border_vertical.jpg) repeat-y; width: 1px; top: 0; bottom: 0; }
+
+.toolTextfield .top { top: -1px; }
+
+.toolTextfield .right { right: -1px; }
+
+.toolTextfield .bottom { bottom: -1px; }
+
+.toolTextfield .left { left: -1px; }
+
+.toolTextfield.focus { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: invert; z-index: 2; }
 
 .toolTextfield.focus label { opacity: 0; }
 
 .toolTextfield:not(.focus) textarea { display: none; }
 
-.toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background: transparent; resize: none; font-size: 20px; font-family: verdana; }
+.toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background-color: transparent; resize: none; font-size: 20px; font-family: verdana; }
 
 .toolTextfield label { white-space: pre; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
 
 .toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
-
-.toolTextfield textarea { float: left; }
 
 .toolbar .selected { padding: 2px !important; box-shadow: rgba(255, 255, 255, 0.7) 0 0 2px 1px inset !important; }
 
