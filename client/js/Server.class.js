@@ -25,6 +25,11 @@ Server.prototype.init = function() {
 		self.userId = resp;
 	});
 	
+	// someone disconnected
+	this.socket.on("disconnect", function(userId) {
+		main.cursor.remove(userId);
+	});
+	
 	// "date" is for getting the server time
 	this.socket.on("date", function(resp) {
 		var receiveTime = new Date().getTime(),
@@ -38,7 +43,8 @@ Server.prototype.init = function() {
 	this.socket.on("*", function(resp) {
 		switch (resp.type) {
 			case "cursor":
-				main.cursor.move(resp.userId, resp.data.x, resp.data.y);
+				if (resp.data.remove) main.cursor.remove(resp.userId);
+				else main.cursor.move(resp.userId, resp.data.x, resp.data.y);
 				break;
 			case "board tmp":
 				console.log(resp);

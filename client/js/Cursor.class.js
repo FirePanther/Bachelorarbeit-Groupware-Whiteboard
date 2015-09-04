@@ -4,8 +4,20 @@
 function Cursor() {
 	this.$cursors = $(".cursors");
 	this.cursors = {};
+	this.focus = true;
 	
-	$(window).on("mousemove.cursor", this.broadcast);
+	this.x = this.y = null;
+	
+	var self = this;
+	$(window).on("mousemove.cursor mouseenter.cursor", function(event) {
+		if (self.focus) self.broadcastMove.apply(self, [ event ]);
+	}).on("focus.cursor", function() {
+		self.focus = true;
+	}).on("blur.cursor", function(event) {
+		self.focus = false;
+	}).on("mouseleave.cursor", function(event) {
+		self.broadcastAway.apply(self, [ event ]);
+	});
 };
 
 /**
@@ -38,7 +50,7 @@ Cursor.prototype.move = function(cursorId, x, y) {
 			y: y,
 			remove: (function(self, cursorId) {
 				return function() {
-					self.removeCursor(cursorId);
+					self.remove(cursorId);
 				};
 			})(this, cursorId)
 		};
@@ -48,17 +60,33 @@ Cursor.prototype.move = function(cursorId, x, y) {
 /**
  * 
  */
-Cursor.prototype.removeCursor = function(cursorId) {
-	this.cursors[cursorId].$element.remove();
-	delete this.cursors[cursorId];
+Cursor.prototype.remove = function(cursorId) {
+	console.log(this);
+	if (this.cursors[cursorId]) {
+		this.cursors[cursorId].$element.remove();
+		delete this.cursors[cursorId];
+	}
 };
 
 /**
  * 
  */
-Cursor.prototype.broadcast = function(event) {
+Cursor.prototype.broadcastMove = function(event) {
+	if (this.focus) {
+		this.x = event.pageX;
+		this.y = event.pageY;
+		main.server.broadcast("cursor", {
+			x: event.pageX,
+			y: event.pageY
+		});
+	}
+};
+
+/**
+ * 
+ */
+Cursor.prototype.broadcastAway = function(event) {
 	main.server.broadcast("cursor", {
-		x: event.pageX,
-		y: event.pageY
+		remove: true
 	});
 };

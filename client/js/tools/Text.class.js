@@ -47,11 +47,24 @@ Text.prototype.deinitEvents = function() {
 /**
  * 
  */
+Text.prototype.colorChanged = function(newColor) {
+	var $textfield = $(".toolTextfield.focus");
+	this.setColor($textfield);
+	main.server.broadcast("board tmp", {
+		toolNr: HistoryType.TEXT,
+		id: $textfield.attr("id"),
+		color: newColor
+	});
+};
+
+/**
+ * 
+ */
 Text.prototype.createTextfield = function() {
 	var self = this,
 		id = main.server.getTime(),
-		$textfield = $('<div class="toolTextfield focus" id="' + id + '" />'),
-		$input = $('<textarea />'),
+		$textfield = $('<div class="toolTextfield" id="' + id + '" />'),
+		$input = $('<textarea spellcheck="false" />'),
 		$parent = $('<div class="parent" />'),
 		$label = $('<label />'),
 		elements = { t: $textfield, i: $input, p: $parent, l: $label },
@@ -62,6 +75,7 @@ Text.prototype.createTextfield = function() {
 		bottom = Math.max(this.click.y1, this.click.y2),
 		width = 0,
 		height = 0;
+	
 	// static sizes
 	if (right - left > 5) width = right - left;
 	if (bottom - top > 5) height = bottom - top;
@@ -76,17 +90,7 @@ Text.prototype.createTextfield = function() {
 	
 	// textfield events
 	$textfield.on("click", function() {
-		if (!$(this).is(".focus") && !$(this).attr("data-dragging")) {
-			var $input = $(this).find("textarea");
-			self.selection = new Selection($(this));
-			$(this).addClass("focus");
-			main.server.broadcast("board tmp", {
-				toolNr: HistoryType.TEXT,
-				id: $textfield.attr("id"),
-				focus: true
-			});
-			$input.focus();
-		}
+		self.inputFocus.apply(self, [ elements ]);
 	}).on("mousedown", this.startDrag);
 	
 	// position and size
@@ -115,11 +119,12 @@ Text.prototype.createTextfield = function() {
 		pos: {
 			x: left,
 			y: top
-		}
+		},
+		color: main.tools.getColor()
 	});
 	
-	this.selection = new Selection($textfield);
-	$input.focus();
+	this.setColor($textfield, main.tools.getColor());
+	this.inputFocus(elements);
 	
 	this.textfields.push($textfield);
 };
@@ -159,6 +164,8 @@ Text.prototype.createTmpTextfield = function(id, val, focus, color, pos) {
 		else if (val.d) $label.text(curVal.substr(0, curVal.length - val.d));
 	}
 	
+	if (color !== undefined) $label.css("color", main.tools.getColor(color));
+	
 	if (pos) {
 		if (pos.x) $textfield.css("left", (main.tools.toolbarWidth + pos.x) + "px");
 		if (pos.y) $textfield.css("top", pos.y + "px");
@@ -176,25 +183,33 @@ Text.prototype.startDrag = function(event) {
 	var $self = $(this),
 		x = event.offsetX,
 		y = event.offsetY;
-	$(window).on("mousemove.drag", function(event) {
-		$self.attr("data-dragging", 1);
-		$self.css({
-			left: event.pageX - x,
-			top: event.pageY - y
-		});
-		main.server.broadcast("board tmp", {
-			toolNr: HistoryType.TEXT,
-			id: $self.attr("id"),
-			pos: {
-				x: event.pageX - x - main.tools.toolbarWidth,
-				y: event.pageY - y
-			}
-		});
-	}).on("mouseup.drag", function() {
-		$(this).off(".drag");
-		setTimeout(function() {
-			$self.removeAttr("data-dragging");
-		}, 0);
+	
+	$(window).on("mousemove.textdrag", function(event) {
+		if ($self.is(".focus")) {
+			// remove dragging events because of focus
+			$(this).off(".textdrag");
+		} else {
+			$self.attr("data-dragging", 1);
+			$self.css({
+				left: event.pageX - x,
+				top: event.pageY - y
+			});
+			main.server.broadcast("board tmp", {
+				toolNr: HistoryType.TEXT,
+				id: $self.attr("id"),
+				pos: {
+					x: event.pageX - x - main.tools.toolbarWidth,
+					y: event.pageY - y
+				}
+			});
+		}
+	}).on("mouseup.textdrag", function() {
+		if ($self.attr("data-dragging")) {
+			$(this).off(".textdrag");
+			setTimeout(function() {
+				$self.removeAttr("data-dragging");
+			}, 0);
+		}
 	});
 };
 
@@ -232,25 +247,23 @@ Text.prototype.inputKey = function(elements, eventType) {
 			var broadcast = {
 				toolNr: HistoryType.TEXT,
 				id: $textfield.attr("id"),
-				val: {},
 				pos: {
 					w: labelSize[0],
 					h: labelSize[1]
-				},
-				color: main.tools.options.color
+				}
 			};
 			
 			// only if value was changed, try to send difference
 			if (oldVal != val) {
 				if (val.substr(0, oldVal.length) == oldVal) {
 					// text added:
-					broadcast.val.a = val.substr(oldVal.length);
+					broadcast.val = { a: val.substr(oldVal.length) };
 				} else if (oldVal.substr(0, val.length) == val) {
 					// text deleted (num of chars):
-					broadcast.val.d = oldVal.length - val.length;
+					broadcast.val = { d: oldVal.length - val.length };
 				} else {
 					// just send the text
-					broadcast.val.t = val;
+					broadcast.val = { t: val };
 				}
 			}
 			main.server.broadcast("board tmp", broadcast);
@@ -263,27 +276,64 @@ Text.prototype.inputKey = function(elements, eventType) {
 /**
  * 
  */
+Text.prototype.inputFocus = function(elements) {
+	var $input = elements.i,
+		$parent = elements.p,
+		$textfield = elements.t;
+	
+	if (!$textfield.is(".focus") && !$textfield.attr("data-dragging")) {
+		$(".toolbar .colors").on("mousedown.text", function() {
+			$textfield.attr("data-prevent-blur", 1);
+		});
+		this.selection = new Selection($textfield);
+		$textfield.addClass("focus");
+		main.server.broadcast("board tmp", {
+			toolNr: HistoryType.TEXT,
+			id: $textfield.attr("id"),
+			focus: true
+		});
+		$input.focus();
+	}
+};
+
+/**
+ * 
+ */
 Text.prototype.inputBlur = function(elements, events) {
 	var $input = elements.i,
 		$parent = elements.p,
 		$textfield = elements.t;
 	
-	this.selection.remove();
+	if ($textfield.attr("data-prevent-blur")) {
+		$textfield.removeAttr("data-prevent-blur");
+		$input.focus();
+	} else {
+		$(".toolbar .colors").off(".text");
 
-	$textfield.removeClass("focus");
-	var broadcast = {
-		toolNr: HistoryType.TEXT,
-		id: $textfield.attr("id"),
-		focus: false
-	};
-	if (!$input.attr("data-fixed")) {
-		if (!$input.val().length) {
-			$textfield.remove();
-			delete broadcast.focus;
-			broadcast.remove = true;
-		} else $input.attr("data-fixed", 1);
+		this.selection.remove();
+	
+		$textfield.removeClass("focus");
+		var broadcast = {
+			toolNr: HistoryType.TEXT,
+			id: $textfield.attr("id"),
+			focus: false
+		};
+		if (!$input.attr("data-fixed")) {
+			if (!$input.val().length) {
+				$textfield.remove();
+				delete broadcast.focus;
+				broadcast.remove = true;
+			} else $input.attr("data-fixed", 1);
+		}
+		main.server.broadcast("board tmp", broadcast);
 	}
-	main.server.broadcast("board tmp", broadcast);
+};
+
+/**
+ * 
+ */
+Text.prototype.setColor = function($textfield, colorId) {
+	$textfield.find("label, textarea").css("color", main.tools.getColor(colorId));
 };
 
 /**

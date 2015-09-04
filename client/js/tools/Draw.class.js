@@ -81,7 +81,7 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 		var history = main.history.add({
 			toolNr: this.toolNr,
 			drawing: this.tmpHistory,
-			color: main.tools.options.color
+			color: main.tools.getColor()
 		});
 		main.server.broadcast("board", history);
 	}
@@ -132,11 +132,7 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 					break;
 			}
 			
-			if (/^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(color)) {
-				curBoard.context.strokeStyle = color;
-			} else {
-				curBoard.context.strokeStyle = main.tools.getColor(color);
-			}
+			curBoard.context.strokeStyle = main.tools.getColor(color);
 			
 			// bevel (eckig), miter (spitz), round (rund)
 			curBoard.context.lineJoin = "round";
@@ -189,7 +185,7 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 			toolNr: toolNr,
 			p: position,
 			s: state,
-			color: curBoard.context.strokeStyle
+			color: main.tools.getColor(color)
 		});
 	}
 };
@@ -198,7 +194,6 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
  * 
  */
 Draw.prototype.broadcast = function(userId, parameters) {
-	console.log(parameters);
 	this.draw(parameters.toolNr, parameters.p, parameters.s, parameters.color, userId);
 };
 

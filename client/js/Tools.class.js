@@ -13,9 +13,7 @@ function Tools() {
 	this.toolbarWidth = 80;
 	this.selectedTool = null;
 	
-	this.options = {
-		color: null
-	};
+	this.color = null;
 };
 
 /**
@@ -97,43 +95,41 @@ Tools.prototype.registerTool = function(toolNr) {
 /**
  * 
  */
-Tools.prototype.getColor = function(colorID) {
-	if (colorID === undefined) {
-		if (this.options.color == -1) {
-			return this.options.colorCode;
-		} else {
-			return this.colorIDs[this.options.color];
-		}
-	} else {
-		return this.colorIDs[colorID];
-	}
+Tools.prototype.getColor = function(color) {
+	if (color === undefined) return this.color;
+	else if (/^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(color)) return color.toUpperCase();
+	else return this.colorIDs[color];
 };
 
 /**
  * 
  */
 Tools.prototype.selectColor = function(color) {
+	var colorID = -1;
+	
 	this.$colors.find(".selected").removeClass("selected");
+	
 	if (/^\#[a-fA-F0-9]{6}$/.test(color)) {
-		var colorCode = color, colorID = -1;
 		for (var i in this.colorIDs) {
 			if (this.colorIDs[i].toLowerCase() == colorCode.toLowerCase()) {
 				colorID = i;
 				break;
 			}
 		}
-		this.options.colorCode = colorCode;
+		this.color = color.toUpperCase();
 	} else {
-		var colorID = parseInt(color);
+		colorID = parseInt(color);
 		if (colorID < 0) colorID = 0;
 		else if (colorID >= this.colorIDs.length) colorID = this.colorIDs.length - 1;
+		this.color = this.colorIDs[colorID];
 	}
 	if (colorID != -1) {
 		this["$color" + colorID].addClass("selected");
-		this.$colorpicker.val(this.colorIDs[colorID]);
+		this.$colorpicker.val(this.color);
 	}
 	
-	this.options.color = parseInt(colorID);
+	// call events
+	if (this.selectedTool && this.selectedTool.colorChanged) this.selectedTool.colorChanged(this.color);
 };
 
 /**
@@ -143,7 +139,7 @@ Tools.prototype.selectTool = function(toolNr) {
 	this.$tools.find(".selected").removeClass("selected");
 	this["$tool" + toolNr].addClass("selected");
 	
-	this.options.tool = parseInt(toolNr);
+	this.tool = parseInt(toolNr);
 		
 	main.board.$board.off(".tool");
 	if (this.selectedTool && this.selectedTool.deinitEvents) {
