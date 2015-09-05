@@ -36,10 +36,10 @@ Tools.prototype.init = function() {
  * 
  */
 Tools.prototype.initColors = function() {
-	var self = this, colorID;
+	var self = this, colorId;
 	
 	// source: http://flatuicolors.co/
-	this.colorIDs = [
+	this.colorIds = [
 		"#34495E", // dark
 		"#7F8C8D", // gray
 		"#9B59B6", // purple
@@ -53,12 +53,14 @@ Tools.prototype.initColors = function() {
 	this.$colors = $("<section class=\"colors\"/>");
 	
 	this.$colorpicker = $("<input type=\"color\" class=\"colorpicker\" maxlength=\"7\" />").on("change keyup", function() {
-		self.selectColor($(this).val());
+		if ($(this).val().length == 7) {
+			self.selectColor($(this).val());
+		}
 	});
 	this.$colors.append(this.$colorpicker);
 	
-	for (var i in this.colorIDs) {
-		this["$color" + i] = $("<div class=\"color\" data-color-id=\"" + i + "\" data-color=\"" + this.colorIDs[i].substr(1) + "\"><div style=\"background-color: " + this.colorIDs[i] + "\" /></div>");
+	for (var i in this.colorIds) {
+		this["$color" + i] = $("<div class=\"color\" data-color-id=\"" + i + "\" data-color=\"" + this.colorIds[i].substr(1) + "\"><div style=\"background-color: " + this.colorIds[i] + "\" /></div>");
 		this["$color" + i].on("click", function() {
 			self.selectColor($(this).attr("data-color-id"));
 		});
@@ -98,33 +100,36 @@ Tools.prototype.registerTool = function(toolNr) {
 Tools.prototype.getColor = function(color) {
 	if (color === undefined) return this.color;
 	else if (/^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(color)) return color.toUpperCase();
-	else return this.colorIDs[color];
+	else return this.colorIds[color];
 };
 
 /**
  * 
  */
 Tools.prototype.selectColor = function(color) {
-	var colorID = -1;
+	var colorId = -1;
 	
+	color = ("" + color).toUpperCase();
 	this.$colors.find(".selected").removeClass("selected");
 	
-	if (/^\#[a-fA-F0-9]{6}$/.test(color)) {
-		for (var i in this.colorIDs) {
-			if (this.colorIDs[i].toLowerCase() == colorCode.toLowerCase()) {
-				colorID = i;
+	if (/^\#[A-F0-9]{6}$/.test(color)) {
+		for (var i in this.colorIds) {
+			if (this.colorIds[i] == color) {
+				colorId = i;
 				break;
 			}
 		}
-		this.color = color.toUpperCase();
+		this.color = color;
 	} else {
-		colorID = parseInt(color);
-		if (colorID < 0) colorID = 0;
-		else if (colorID >= this.colorIDs.length) colorID = this.colorIDs.length - 1;
-		this.color = this.colorIDs[colorID];
+		console.log(colorId);
+		colorId = parseInt(color);
+		if (colorId < 0 || isNaN(colorId)) colorId = 0;
+		else if (colorId >= this.colorIds.length) colorId = this.colorIds.length - 1;
+		this.color = this.colorIds[colorId];
 	}
-	if (colorID != -1) {
-		this["$color" + colorID].addClass("selected");
+	if (colorId != -1) {
+		console.log(colorId);
+		this["$color" + colorId].addClass("selected");
 		this.$colorpicker.val(this.color);
 	}
 	
