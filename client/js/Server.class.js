@@ -1,4 +1,13 @@
 /**
+ * Enum
+ */
+var BroadcastType = {
+	CURSOR: 1,
+	TMP: 2,
+	SAVE: 3
+};
+
+/**
  * Tools...
  * @constructor
  */
@@ -42,19 +51,17 @@ Server.prototype.init = function() {
 	// on broadcast (when I get data from other users)
 	this.socket.on("*", function(resp) {
 		switch (resp.type) {
-			case "cursor":
+			case BroadcastType.CURSOR:
 				if (resp.data.remove) main.cursor.remove(resp.userId);
 				else main.cursor.move(resp.userId, resp.data.x, resp.data.y);
 				break;
-			case "board tmp":
-				console.log(resp);
+			case BroadcastType.TMP:
 				var toolNr = resp.data.toolNr,
 					toolObject = HistoryType.properties[toolNr].toolObject;
 				toolObject.broadcast.apply(toolObject, [ resp.userId, resp.data ]);
 				break;
-			case "board":
+			case BroadcastType.SAVE:
 				main.board.drawed = false;
-				console.log(resp);
 				
 				var lastEntry = main.history.last();
 				if (!lastEntry || !lastEntry.whole || lastEntry.index !== main.board.wholeBoards) {

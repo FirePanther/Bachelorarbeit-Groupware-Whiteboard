@@ -61,7 +61,6 @@ Cursor.prototype.move = function(cursorId, x, y) {
  * 
  */
 Cursor.prototype.remove = function(cursorId) {
-	console.log(this);
 	if (this.cursors[cursorId]) {
 		this.cursors[cursorId].$element.remove();
 		delete this.cursors[cursorId];
@@ -75,7 +74,7 @@ Cursor.prototype.broadcastMove = function(event) {
 	if (this.focus) {
 		this.x = event.pageX;
 		this.y = event.pageY;
-		main.server.broadcast("cursor", {
+		main.server.broadcast(BroadcastType.CURSOR, {
 			x: event.pageX,
 			y: event.pageY
 		});
@@ -86,7 +85,7 @@ Cursor.prototype.broadcastMove = function(event) {
  * 
  */
 Cursor.prototype.broadcastAway = function(event) {
-	main.server.broadcast("cursor", {
+	main.server.broadcast(BroadcastType.CURSOR, {
 		remove: true
 	});
 };
