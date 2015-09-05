@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^[dth4MDPioZyeUuHCv9pGVxjbLg7f8FQsX_azNmqRA61cWkB\-w3EK\+JSrTY5n2]+$ index.html [L]
