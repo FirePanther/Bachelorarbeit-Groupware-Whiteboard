@@ -199,7 +199,7 @@ body:not(.toolText) .toolTextfield {
 		}
 	}
 	
-	.tools .tool, .colors .color {
+	.tool, .colors .color {
 		float: left;
 		padding: 4px;
 		box-shadow: transparent 0 0 2px 1px inset;
@@ -210,21 +210,23 @@ body:not(.toolText) .toolTextfield {
 		cursor: pointer;
 	}
 	
-	.tools {
-		.tool {
-			border-radius: 10px;
-			text-align: center;
-			
-			img {
-				max-width: 100%;
-				max-height: 100%;
-			}
-			
-			.toolText {
-				color: white;
-				font-family: times;
-				font-size: 24px;
-			}
+	.tool {
+		border-radius: 10px;
+		text-align: center;
+		
+		img {
+			max-width: 100%;
+			max-height: 100%;
+		}
+		
+		.toolText {
+			color: white;
+			font-family: times;
+			font-size: 24px;
+		}
+		
+		&.tool-unclickable {
+			opacity: .3;
 		}
 	}
 	

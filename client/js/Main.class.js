@@ -29,11 +29,12 @@ Main.prototype.init = function() {
 	debug.log("+ Main init");
 	
 	this.history = new History();
-	this.board = new Board($("#visibleBoard"));
 	this.cursor = new Cursor();
 	
 	this.server.init();
 	this.tools.init();
+	
+	this.board = new Board($("#visibleBoard"));
 	
 	// initialized main
 	this.initialized = true;

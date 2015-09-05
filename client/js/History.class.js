@@ -27,6 +27,7 @@ var HistoryType = {
 function History(board) {
 	this.history = {};
 	this.tmp = {};
+	this.events = [];
 };
 
 /**
@@ -39,6 +40,7 @@ History.prototype.add = function(entry) {
 	var id = main.server.getTime() + "_" + hash(entry);
 	entry2.own = true;
 	this.history[id] = entry2;
+	this.callEvents();
 	return {
 		id: id,
 		entry: entry
@@ -51,6 +53,23 @@ History.prototype.add = function(entry) {
 History.prototype.addById = function(id, own, entry) {
 	entry.own = own;
 	this.history[id] = entry;
+	this.callEvents();
+};
+
+/**
+ *
+ */
+History.prototype.registerEvent = function(obj, func) {
+	this.events.push([ obj, func ]);
+};
+
+/**
+ *
+ */
+History.prototype.callEvents = function() {
+	$.each(this.events, function() {
+		this[0][this[1]].apply(this[0]);
+	});
 };
 
 /**

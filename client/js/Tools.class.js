@@ -121,14 +121,12 @@ Tools.prototype.selectColor = function(color) {
 		}
 		this.color = color;
 	} else {
-		console.log(colorId);
 		colorId = parseInt(color);
 		if (colorId < 0 || isNaN(colorId)) colorId = 0;
 		else if (colorId >= this.colorIds.length) colorId = this.colorIds.length - 1;
 		this.color = this.colorIds[colorId];
 	}
 	if (colorId != -1) {
-		console.log(colorId);
 		this["$color" + colorId].addClass("selected");
 		this.$colorpicker.val(this.color);
 	}

@@ -25,7 +25,15 @@ function Board($board) {
 	this.$tmpBoards = $(".tmpBoards");
 	this.tmpBoards = {};
 	
+	// main whole board (contains the end result without history steps)
+	this.wholeMain = this.tmpBoard(null, true);
+	
+	this.addUndoButtons();
+	
 	if ($board !== 0 && $board.length) this.setBoard($board);
+	
+	main.history.registerEvent(this, "drawHistory");
+	main.history.registerEvent(this, "undoButtonsVisibility");
 };
 
 /**
@@ -39,12 +47,11 @@ Board.prototype.tmpBoard = function(boardId, whole) {
 	}
 	if (!this.tmpBoards[boardId]) {
 		// create
-		var $canvas = $('<canvas class="board ' + (whole ? "hidden" : "fullscreen click-through") + '" id="board_' + boardId + '"/>'),
-			width = window.innerWidth - main.tools.toolbarWidth,
-			height = window.innerHeight;
+		var $canvas = $('<canvas class="board ' + (whole ? "hidden" : "fullscreen click-through") + '" id="board_' + boardId + '"/>');
+		
 		$canvas.css("left", main.tools.toolbarWidth + "px").attr({
-			width: width < BOARDMAXWIDTH && !whole ? width : BOARDMAXWIDTH,
-			height: height < BOARDMAXHEIGHT && !whole ? height : BOARDMAXHEIGHT
+			width: BOARDMAXWIDTH,
+			height: BOARDMAXHEIGHT
 		});
 		this.$tmpBoards.append($canvas);
 		this.tmpBoards[boardId] = {
@@ -104,6 +111,119 @@ Board.prototype.clear = function() {
 };
 
 /**
+ * 
+ */
+Board.prototype.undo = function() {
+	var pre = 0, h, undone = false;
+	for (var x in main.history.history) {
+		h = main.history.history[x];
+		if (h.whole) continue;
+		if (h.undone) {
+			undone = true;
+			if (pre) pre.undone = true;
+			break;
+		} else pre = h;
+	}
+	if (!undone && pre) pre.undone = true;
+	this.undoButtonsVisibility(true);
+	this.redraw();
+};
+
+/**
+ * 
+ */
+Board.prototype.redo = function() {
+	var h;
+	for (var x in main.history.history) {
+		h = main.history.history[x];
+		if (h.whole) continue;
+		if (h.undone) {
+			delete h.undone;
+			break;
+		}
+	}
+	this.undoButtonsVisibility(true);
+	this.redraw();
+};
+
+/**
+ * 
+ */
+Board.prototype.undoButtonsVisibility = function(keep) {
+	keep = keep || false;
+	var h = main.history.history,
+		keys = Object.keys(h),
+		first = h[keys[0]],
+		last = h[keys[keys.length - 1]],
+		classes = "tool-unclickable click-through";
+	
+	if (!keep) {
+		// remove redos
+		for (var x in h) {
+			if (h[x].undone) {
+				delete h[x].undone;
+			}
+		}
+	}
+	
+	if (first.undone) main.tools.$undo.addClass(classes);
+	else main.tools.$undo.removeClass(classes);
+	
+	if (last.undone) main.tools.$redo.removeClass(classes);
+	else main.tools.$redo.addClass(classes);
+};
+
+/**
+ * 
+ */
+Board.prototype.addUndoButtons = function() {
+	var self = this,
+		$undoButtons = $('<section class="undoButtons" />'),
+		$undo = $('<div class="tool tool-unclickable click-through"><img src="img/undo.svg" alt="Undo" /></div>'),
+		$redo = $('<div class="tool tool-unclickable click-through"><img src="img/redo.svg" alt="Redo" /></div>');
+	$undo.click(function() {
+		self.undo.apply(self);
+	});
+	$redo.click(function() {
+		self.redo.apply(self);
+	});
+	$undoButtons.append($undo);
+	$undoButtons.append($redo);
+	main.tools.$undoButtons = $undoButtons;
+	main.tools.$undo = $undo;
+	main.tools.$redo = $redo;
+	main.tools.$settings.after($undoButtons);
+};
+
+/**
+ * creates image of history, removes history items
+ */
+Board.prototype.drawHistory = function() {
+	var undoSteps = 6, historyLen = Object.keys(main.history.history).length;
+	if (historyLen > undoSteps) {
+		// draw image of first steps
+		var i = historyLen - undoSteps, finished = false, h;
+		for (var x in main.history.history) {
+			h = main.history.history[x];
+			if (h.undone) continue;
+			if (h.whole) {
+				this.wholeMain.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
+			} else if (HistoryType.properties[h.toolNr]) {
+				if (finished) {
+					break;
+				} else {
+					HistoryType.properties[h.toolNr].toolObject.redraw(h, this.wholeMain);
+				}
+			}
+			delete main.history.history[x];
+			
+			// breaks, if the next one isn't a whole board
+			if (!--i) finished = true;
+		}
+	}
+};
+
+/**
  * Redraw the whole board.
  */
 Board.prototype.redraw = function() {
@@ -112,9 +232,12 @@ Board.prototype.redraw = function() {
 	//this.context.shadowBlur=20;
 	//this.context.shadowColor="black";
 
+	this.context.drawImage(this.wholeMain.$element[0], 0, 0);
+
 	var h;
 	for (var i in main.history.history) {
 		h = main.history.history[i];
+		if (h.undone) continue;
 		if (h.whole) {
 			this.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
 		} else if (HistoryType.properties[h.toolNr]) {

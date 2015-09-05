@@ -31,19 +31,26 @@ Draw.prototype.initEvents = function(toolNr) {
 	var self = this;
 	main.board.$board.on("mousedown.tool", function(event) {
 		// start drawing
-		self.drawAction(event, true);
+		if (!event.button) { // left mouse button
+			self.drawAction(event, true);
+		}
 	}).on("mousemove.tool", function(event) {
 		// still drawing
 		if (self.drawing[0] == 1) self.drawAction(event, false, false, 1);
 	}).on("mouseleave.tool", function(event) {
 		// pause drawing
 		if (self.drawing[0] == 1) {
+			console.log("leave: "+event.buttons);
 			self.drawAction(event, false, true, 2);
 			self.drawing[0] = 2;
 		}
 	}).on("mouseenter.tool", function(event) {
 		// continue drawing
-		if (self.drawing[0] == 2 && event.buttons == 1) self.drawAction(event, true, true);
+		if (event.buttons == 1) {
+			if (self.drawing[0] == 2) self.drawAction(event, true, true);
+		} else {
+			self.drawing[0] = 0;
+		}
 	}).on("mouseup.tool", function(event) {
 		// stop drawing
 		if (self.drawing[0]) {
@@ -66,17 +73,15 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 	setState = setState || 0;
 	
 	this.drawing[0] = 1;
-	if (begin) {
-		this.tmpHistory = [];
-	}
+	if (begin) this.tmpHistory = [];
 	
 	if (doCorrectByDirection) event = correctByDirection(event);
 	var position = [event.offsetX, event.offsetY];
 	
 	this.addHistory(position, setState);
-	this.draw(this.toolNr, position, setState);
+	var drawed = this.draw(this.toolNr, position, setState);
 	
-	if (setState == 2) {
+	if (setState == 2 && drawed) {
 		// finished the current drawing
 		var history = main.history.add({
 			toolNr: this.toolNr,
@@ -115,10 +120,10 @@ Draw.prototype.addHistory = function(position, state) {
  * @param {integer} state.2 - mouse is up
  * @param ...
  */
-Draw.prototype.draw = function(toolNr, position, state, color, userId) {
+Draw.prototype.draw = function(toolNr, position, state, color, userId, board) {
 	userId = userId || 0; // 0 = own, -1 = not important (e.g. redraw)
 	
-	var curBoard = (userId == -1 ? main.board : main.board.tmpBoard(userId));
+	var curBoard = (userId == -1 ? board : main.board.tmpBoard(userId));
 	
 	switch (state) {
 		// mouse down
@@ -131,7 +136,7 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 			break;
 		// mouse up
 		case 2:
-			this.drawEnd(curBoard, position, userId);
+			if (!this.drawEnd(curBoard, position, userId)) return false;
 			break;
 	}
 	
@@ -144,6 +149,7 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 			color: main.tools.getColor(color)
 		});
 	}
+	return true;
 };
 
 /**
@@ -164,6 +170,7 @@ Draw.prototype.drawStart = function(toolNr, curBoard, position, color) {
 	curBoard.context.lineJoin = "round";
 	curBoard.context.lineCap = "round";
 	curBoard.cache.startPosition = position;
+	curBoard.cache.moved = false;
 };
 
 /**
@@ -177,16 +184,18 @@ Draw.prototype.drawContinue = function(curBoard, position) {
 
 	curBoard.context.lineTo(position[0], position[1]);
 	curBoard.context.stroke();
+	curBoard.cache.moved = true;
 };
 
 /**
  */
 Draw.prototype.drawEnd = function(curBoard, position, userId) {
+	if (!curBoard.cache.moved) return false;
 	if (!curBoard.cache.startPosition) {
 		curBoard.context.lineTo(position[0], position[1]);
 		curBoard.context.stroke();
 	}
-	if (curBoard.temporary) {
+	if (curBoard.temporary && userId != -1) { // temporary and NO redraw
 		if (userId == 0) {
 			main.board.context.drawImage(curBoard.$element[0], 0, 0);
 			main.board.drawed = true;
@@ -196,7 +205,7 @@ Draw.prototype.drawEnd = function(curBoard, position, userId) {
 			var wholeBoard;
 			if (main.board.drawed) {
 				// create new wholeBoard
-				wholeBoard = main.board.tmpBoard(null, true); // create a whole board
+				wholeBoard = main.board.tmpBoard(null, true);
 			} else {
 				// get last wholeBoard
 				wholeBoard = main.board.tmpBoard(main.board.wholeBoards, true);
@@ -204,6 +213,7 @@ Draw.prototype.drawEnd = function(curBoard, position, userId) {
 			wholeBoard.context.drawImage(curBoard.$element[0], 0, 0);
 		}
 	}
+	return true;
 };
 
 /**
@@ -218,11 +228,12 @@ Draw.prototype.broadcast = function(userId, parameters) {
  * board class.
  * @param {Object} history - Contains the whole "current" drawing.
  */
-Draw.prototype.redraw = function(history) {
+Draw.prototype.redraw = function(history, board) {
+	board = board || main.board;
 	debug.log("+ redraw: " + history.toolNr);
 	var d = history.drawing;
 	for (var i in d) {
-		this.draw(history.toolNr, d[i].p, d[i].s, history.color, -1);
+		this.draw(history.toolNr, d[i].p, d[i].s, history.color, -1, board);
 	}
 };
 
