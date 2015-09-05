@@ -83,7 +83,7 @@ Draw.prototype.drawAction = function(event, begin, doCorrectByDirection, setStat
 			drawing: this.tmpHistory,
 			color: main.tools.getColor()
 		});
-		main.server.broadcast("board", history);
+		main.server.broadcast(BroadcastType.SAVE, history);
 	}
 };
 
@@ -123,70 +123,86 @@ Draw.prototype.draw = function(toolNr, position, state, color, userId) {
 	switch (state) {
 		// mouse down
 		case 0:
-			switch (toolNr) {
-				case HistoryType.BRUSH:
-					curBoard.context.lineWidth = 5;
-					break;
-				case HistoryType.PENCIL:
-					curBoard.context.lineWidth = 1;
-					break;
-			}
-			
-			curBoard.context.strokeStyle = main.tools.getColor(color);
-			
-			// bevel (eckig), miter (spitz), round (rund)
-			curBoard.context.lineJoin = "round";
-			curBoard.context.lineCap = "round";
-			curBoard.cache.startPosition = position;
+			this.drawStart(toolNr, curBoard, position, color);
 			break;
 		// mouse move
 		case 1:
-			if (curBoard.cache.startPosition) {
-				curBoard.context.beginPath();
-				curBoard.context.moveTo(curBoard.cache.startPosition[0], curBoard.cache.startPosition[1]);
-				delete curBoard.cache.startPosition;
-			}
-
-			curBoard.context.lineTo(position[0], position[1]);
-			curBoard.context.stroke();
+			this.drawContinue(curBoard, position);
 			break;
 		// mouse up
 		case 2:
-			if (!curBoard.cache.startPosition) {
-				curBoard.context.lineTo(position[0], position[1]);
-				curBoard.context.stroke();
-			}
-			if (curBoard.temporary) {
-				if (userId == 0) {
-					main.board.context.drawImage(curBoard.$element[0], 0, 0);
-					main.board.drawed = true;
-					curBoard.remove();
-				} else {
-					// foreign drawing
-					var wholeBoard;
-					if (main.board.drawed) {
-						// create new wholeBoard
-						wholeBoard = main.board.tmpBoard(null, true); // create a whole board
-					} else {
-						// get last wholeBoard
-						wholeBoard = main.board.tmpBoard(main.board.wholeBoards, true);
-					}
-					wholeBoard.context.drawImage(curBoard.$element[0], 0, 0);
-					
-					// don't remove curBoard, until next request (@see Server.class)
-				}
-			}
+			this.drawEnd(curBoard, position, userId);
 			break;
 	}
 	
 	if (userId == 0) {
 		// currently drawing
-		main.server.broadcast("board tmp", {
+		main.server.broadcast(BroadcastType.TMP, {
 			toolNr: toolNr,
 			p: position,
 			s: state,
 			color: main.tools.getColor(color)
 		});
+	}
+};
+
+/**
+ */
+Draw.prototype.drawStart = function(toolNr, curBoard, position, color) {
+	switch (toolNr) {
+		case HistoryType.BRUSH:
+			curBoard.context.lineWidth = 5;
+			break;
+		case HistoryType.PENCIL:
+			curBoard.context.lineWidth = 1;
+			break;
+	}
+	
+	curBoard.context.strokeStyle = main.tools.getColor(color);
+	
+	// bevel (eckig), miter (spitz), round (rund)
+	curBoard.context.lineJoin = "round";
+	curBoard.context.lineCap = "round";
+	curBoard.cache.startPosition = position;
+};
+
+/**
+ */
+Draw.prototype.drawContinue = function(curBoard, position) {
+	if (curBoard.cache.startPosition) {
+		curBoard.context.beginPath();
+		curBoard.context.moveTo(curBoard.cache.startPosition[0], curBoard.cache.startPosition[1]);
+		delete curBoard.cache.startPosition;
+	}
+
+	curBoard.context.lineTo(position[0], position[1]);
+	curBoard.context.stroke();
+};
+
+/**
+ */
+Draw.prototype.drawEnd = function(curBoard, position, userId) {
+	if (!curBoard.cache.startPosition) {
+		curBoard.context.lineTo(position[0], position[1]);
+		curBoard.context.stroke();
+	}
+	if (curBoard.temporary) {
+		if (userId == 0) {
+			main.board.context.drawImage(curBoard.$element[0], 0, 0);
+			main.board.drawed = true;
+			curBoard.remove();
+		} else {
+			// foreign drawing
+			var wholeBoard;
+			if (main.board.drawed) {
+				// create new wholeBoard
+				wholeBoard = main.board.tmpBoard(null, true); // create a whole board
+			} else {
+				// get last wholeBoard
+				wholeBoard = main.board.tmpBoard(main.board.wholeBoards, true);
+			}
+			wholeBoard.context.drawImage(curBoard.$element[0], 0, 0);
+		}
 	}
 };
 
