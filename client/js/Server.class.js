@@ -12,10 +12,11 @@ var BroadcastType = {
  * @constructor
  */
 function Server() {
-	this.socket = io("http://tchost.de:24690");
+	this.pathname = location.pathname.substr(-1) != "/" ? location.pathname.replace(/^.*?([^\/]+)$/, "$1") : "";
+	this.socket = io("http://tchost.de:24690/?board=" + this.pathname);
 	
 	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
-	this.socket.io.reconnection(false);
+	//this.socket.io.reconnection(false);
 	
 	this.userId = 0;
 	
@@ -32,6 +33,20 @@ Server.prototype.init = function() {
 	// userId
 	this.socket.on("userId", function(resp) {
 		self.userId = resp;
+	});
+	
+	// url
+	this.socket.on("url", function(url) {
+		history.pushState({ url: url }, "board", url);
+	});
+	
+	// error
+	this.socket.on("err", function(resp) {
+		switch (resp) {
+			case 1:
+				alert("You tried to connect to a board that doesn't exist (anymore).");
+				break;
+		}
 	});
 	
 	// someone disconnected
