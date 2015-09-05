@@ -4,6 +4,18 @@ body {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+.selectable {
+	user-select: text;
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-ms-user-select: text;
 }
 
 #visibleBoard {
@@ -26,7 +38,6 @@ body {
 }
 
 .selection {
-	transition: all linear 50ms;
 	position: absolute;
 	z-index: 90;
 	
@@ -158,11 +169,10 @@ body:not(.toolText) .toolTextfield {
 		font-family: verdana;
 	}
 	label {
-		white-space: pre;
-		user-select: none;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		display: inline-block;
+		overflow: hidden;
 	}
 	.parent {
 		position: absolute;

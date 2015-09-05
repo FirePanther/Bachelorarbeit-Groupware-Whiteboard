@@ -1,4 +1,6 @@
-body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); height: 100vh; margin: 0; padding: 0; overflow: hidden; }
+body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); height: 100vh; margin: 0; padding: 0; overflow: hidden; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+
+.selectable { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
 #visibleBoard { background-color: white; }
 
@@ -8,7 +10,7 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 
 .click-through { pointer-events: none; }
 
-.selection { transition: all linear 50ms; position: absolute; z-index: 90; }
+.selection { position: absolute; z-index: 90; }
 
 .selection .top, .selection .bottom { background: url(../img/border_horizontal.gif) repeat-x; position: absolute; height: 1px; left: 0; right: 0; }
 
@@ -58,7 +60,7 @@ body:not(.toolText) .toolTextfield .textselector:not(.dontHide) { display: none;
 
 .toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background-color: transparent; resize: none; font-size: 20px; font-family: verdana; }
 
-.toolTextfield label { white-space: pre; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+.toolTextfield label { white-space: pre-wrap; word-wrap: break-word; display: inline-block; overflow: hidden; }
 
 .toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
 
