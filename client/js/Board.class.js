@@ -32,8 +32,8 @@ function Board($board) {
 	
 	if ($board !== 0 && $board.length) this.setBoard($board);
 	
-	main.history.registerEvent(this, "drawHistory");
 	main.history.registerEvent(this, "undoButtonsVisibility");
+	main.history.registerEvent(this, "drawHistory");
 };
 
 /**
@@ -151,25 +151,25 @@ Board.prototype.redo = function() {
  */
 Board.prototype.undoButtonsVisibility = function(keep) {
 	keep = keep || false;
-	var h = main.history.history,
-		keys = Object.keys(h),
-		first = h[keys[0]],
-		last = h[keys[keys.length - 1]],
-		classes = "tool-unclickable click-through";
+	var h = main.history.history;
 	
 	if (!keep) {
 		// remove redos
 		for (var x in h) {
-			if (h[x].undone) {
-				delete h[x].undone;
-			}
+			if (h[x].undone) delete h[x];
 		}
+		h = main.history.history;
 	}
 	
-	if (first.undone) main.tools.$undo.addClass(classes);
+	var keys = Object.keys(h),
+		first = h[keys[0]],
+		last = h[keys[keys.length - 1]],
+		classes = "tool-unclickable click-through";
+	
+	if (first && first.undone) main.tools.$undo.addClass(classes);
 	else main.tools.$undo.removeClass(classes);
 	
-	if (last.undone) main.tools.$redo.removeClass(classes);
+	if (last && last.undone) main.tools.$redo.removeClass(classes);
 	else main.tools.$redo.addClass(classes);
 };
 
@@ -199,28 +199,39 @@ Board.prototype.addUndoButtons = function() {
  * creates image of history, removes history items
  */
 Board.prototype.drawHistory = function() {
-	var undoSteps = 6, historyLen = Object.keys(main.history.history).length;
-	if (historyLen > undoSteps) {
+	var historyLen = Object.keys(main.history.history).length;
+	if (historyLen > UNDOSTEPS) {
 		// draw image of first steps
-		var i = historyLen - undoSteps, finished = false, h;
+		var i = historyLen - UNDOSTEPS, h, prepared = [];
 		for (var x in main.history.history) {
 			h = main.history.history[x];
+			
 			if (h.undone) continue;
 			if (h.whole) {
 				this.wholeMain.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
 			} else if (HistoryType.properties[h.toolNr]) {
-				if (finished) {
-					break;
-				} else {
-					HistoryType.properties[h.toolNr].toolObject.redraw(h, this.wholeMain);
-				}
+				HistoryType.properties[h.toolNr].toolObject.redraw(h, this.wholeMain);
 			}
+			//HistoryType.properties[h.toolNr].toolObject.deletingHistory();
 			delete main.history.history[x];
 			
-			// breaks, if the next one isn't a whole board
-			if (!--i) finished = true;
+			if (!--i) break;
 		}
 	}
+};
+
+/**
+ * Redraw the whole board.
+ */
+Board.prototype.prepareRedraw = function(h, prepared) {
+	// prepare redraw (remove some stuff)
+	if (h.toolNr && prepared.indexOf(h.toolNr) === -1) {
+		if (HistoryType.properties[h.toolNr].toolObject.prepareRedraw) {
+			HistoryType.properties[h.toolNr].toolObject.prepareRedraw(h.toolNr);
+		}
+		prepared.push(h.toolNr);
+	}
+	return prepared;
 };
 
 /**
@@ -234,9 +245,12 @@ Board.prototype.redraw = function() {
 
 	this.context.drawImage(this.wholeMain.$element[0], 0, 0);
 
-	var h;
+	var h, prepared = [];
 	for (var i in main.history.history) {
 		h = main.history.history[i];
+		
+		prepared = this.prepareRedraw(h, prepared);
+		
 		if (h.undone) continue;
 		if (h.whole) {
 			this.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
