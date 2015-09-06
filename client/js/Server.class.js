@@ -16,7 +16,7 @@ function Server() {
 	this.socket = io("http://tchost.de:24690/?board=" + this.pathname);
 	
 	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
-	//this.socket.io.reconnection(false);
+	this.socket.io.reconnection(false);
 	
 	this.userId = 0;
 	
