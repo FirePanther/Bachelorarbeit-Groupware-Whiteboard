@@ -1,6 +1,7 @@
 // settings
 var BOARDMAXWIDTH = 5120,
-	BOARDMAXHEIGHT = 2880;
+	BOARDMAXHEIGHT = 2880,
+	UNDOSTEPS = 60;
 
 var debug = new Debug(),
 	main = new Main();
