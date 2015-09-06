@@ -56,11 +56,11 @@ body:not(.toolText) .toolTextfield .textselector:not(.dontHide) { display: none;
 
 .toolTextfield.focus label { opacity: 0; }
 
-.toolTextfield:not(.focus) textarea { display: none; }
+.toolTextfield:not(.focus) textarea { opacity: 0; cursor: pointer; }
 
 .toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background-color: transparent; resize: none; font-size: 20px; font-family: verdana; }
 
-.toolTextfield label { white-space: pre-wrap; word-wrap: break-word; display: inline-block; overflow: hidden; }
+.toolTextfield label { cursor: pointer; white-space: pre-wrap; word-wrap: break-word; display: inline-block; overflow: hidden; }
 
 .toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
 

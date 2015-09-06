@@ -154,7 +154,8 @@ body:not(.toolText) .toolTextfield {
 	}
 	&:not(.focus) {
 		textarea {
-			display: none;
+			opacity: 0;
+			cursor: pointer;
 		}
 	}
 	
@@ -169,6 +170,7 @@ body:not(.toolText) .toolTextfield {
 		font-family: verdana;
 	}
 	label {
+		cursor: pointer;
 		white-space: pre-wrap;
 		word-wrap: break-word;
 		display: inline-block;
