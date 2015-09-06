@@ -11,7 +11,10 @@ function Text() {
 	this.selection = null;
 	this.clicked = false;
 	this.click = {};
-	this.textfields = [];
+	this.textfields = {};
+	
+	// textfield safe (whole board alternative), else it will be removed e.g. by too many undos
+	this.textfieldsSafe = {};
 };
 
 /**
@@ -85,36 +88,36 @@ Text.prototype.deinitEvents = function() {
  */
 Text.prototype.colorChanged = function(newColor) {
 	var $textfield = $(".toolTextfield.focus");
-	this.setColor($textfield);
-	main.server.broadcast(BroadcastType.TMP, {
-		toolNr: HistoryType.TEXT,
-		id: $textfield.attr("id"),
-		color: newColor
-	});
+	if ($textfield.length) {
+		this.setColor($textfield, newColor, true);
+		main.server.broadcast(BroadcastType.TMP, {
+			toolNr: HistoryType.TEXT,
+			id: $textfield.attr("id"),
+			color: newColor
+		});
+	}
 };
 
 /**
  * 
  */
-Text.prototype.createTextfield = function() {
-	var self = this,
-		id = main.server.getTime(),
-		$textfield = $('<div class="toolTextfield" id="' + id + '" />'),
-		$input = $('<textarea spellcheck="false" />'),
-		$parent = $('<div class="parent" />'),
-		$label = $('<label />').text(" "),
-		elements = { t: $textfield, i: $input, p: $parent, l: $label },
-		
-		left = Math.min(this.click.x1, this.click.x2),
-		right = Math.max(this.click.x1, this.click.x2),
-		top = Math.min(this.click.y1, this.click.y2),
-		bottom = Math.max(this.click.y1, this.click.y2),
-		width = 0,
-		height = 0;
+Text.prototype.createTextfield = function(id, val, left, top, width, height, color, redraw) {
+	id = id || main.server.getTime();
+	val = val || "";
+	left = left === undefined ? Math.min(this.click.x1, this.click.x2) + main.tools.toolbarWidth : left;
+	top = top === undefined ? Math.min(this.click.y1, this.click.y2) : top;
+	width = width === undefined ? Math.max(this.click.x1, this.click.x2) - left : width;
+	height = height === undefined ? Math.max(this.click.y1, this.click.y2) - top : height;
+	color = color || main.tools.getColor();
 	
-	// static sizes
-	if (right - left > 5) width = right - left;
-	if (bottom - top > 5) height = bottom - top;
+	var self = this,
+		$textfield = $('<div class="toolTextfield" id="' + id + '" data-own="1" />'),
+		$input = $('<textarea spellcheck="false"' + (val.length ? ' data-fixed="1"' : "") + ' />'),
+		$parent = $('<div class="parent" />'),
+		$label = $('<label />').text(val == "" ? " " : val),
+		elements = { t: $textfield, i: $input, p: $parent, l: $label };
+	
+	if (val) $input.val(val);
 	
 	// input events
 	$input.on("keydown keyup paste", function(event) {
@@ -129,21 +132,24 @@ Text.prototype.createTextfield = function() {
 	// textfield events
 	$textfield.on("click", function() {
 		self.inputFocus.apply(self, [ elements ]);
-	}).on("mousedown", this.startDrag);
+	}).on("mousedown", function(event) {
+		self.startDrag.apply(self, [ elements, event ]);
+	});
 	
 	// position and size
 	$textfield.css({
-		left: (left + main.tools.toolbarWidth) + "px",
+		left: left + "px",
 		top: top + "px"
 	});
-	if (width) {
+	// static size
+	if (width > 5) {
 		$textfield.css("width", width + "px").attr("data-w", width);
 		$label.css("width", width + "px");
-	}
-	if (height) {
+	} else width = 0;
+	if (height > 5) {
 		$textfield.css("height", height + "px").attr("data-h", height);
 		$label.css("height", height + "px");
-	}
+	} else height = 0;
 	
 	// DOM
 	this.appendTextfieldDom($textfield, {
@@ -154,28 +160,35 @@ Text.prototype.createTextfield = function() {
 		body: true
 	});
 	
-	main.server.broadcast(BroadcastType.TMP, {
-		toolNr: HistoryType.TEXT,
-		id: id,
-		focus: true,
+	this.setColor($textfield, color);
+	var size = this.setInputSize(elements);
+	
+	if (!redraw) {
+		main.server.broadcast(BroadcastType.TMP, {
+			toolNr: HistoryType.TEXT,
+			id: id,
+			focus: true,
+			pos: {
+				x: left - main.tools.toolbarWidth,
+				y: top,
+				w: width ? width : $label.outerWidth(),
+				h: height ? height : $label.outerHeight()
+			},
+			color: color
+		});
+		this.inputFocus(elements);
+	}
+	
+	this.textfields[id] = {
 		pos: {
-			x: left,
-			y: top,
-			w: width ? width : $label.outerWidth(),
-			h: height ? height : $label.outerHeight()
+			left: left,
+			top: top
 		},
-		color: main.tools.getColor()
-	});
-	
-	this.setColor($textfield, main.tools.getColor());
-	
-	$input.css({
-		width: $label.outerWidth() + 20,
-		height: $label.outerHeight() + 5
-	});
-	this.inputFocus(elements);
-	
-	this.textfields.push($textfield);
+		width: width,
+		height: height,
+		val: val,
+		color: color
+	};
 };
 
 /**
@@ -247,24 +260,25 @@ Text.prototype.appendTextfieldDom = function($textfield, options) {
 /**
  * 
  */
-Text.prototype.startDrag = function(event) {
-	var $self = $(this),
+Text.prototype.startDrag = function(elements, event) {
+	var self = this,
+		$textfield = elements.t,
 		x = event.offsetX,
 		y = event.offsetY;
 	
 	$(window).on("mousemove.textdrag", function(event) {
-		if ($self.is(".focus")) {
+		if ($textfield.is(".focus")) {
 			// remove dragging events because of focus
 			$(this).off(".textdrag");
 		} else {
-			$self.attr("data-dragging", 1);
-			$self.css({
+			$textfield.attr("data-dragging", 1);
+			$textfield.css({
 				left: event.pageX - x,
 				top: event.pageY - y
 			});
 			main.server.broadcast(BroadcastType.TMP, {
 				toolNr: HistoryType.TEXT,
-				id: $self.attr("id"),
+				id: $textfield.attr("id"),
 				pos: {
 					x: event.pageX - x - main.tools.toolbarWidth,
 					y: event.pageY - y
@@ -272,11 +286,19 @@ Text.prototype.startDrag = function(event) {
 			});
 		}
 	}).on("mouseup.textdrag", function() {
-		if ($self.attr("data-dragging")) {
+		if ($textfield.attr("data-dragging")) {
 			$(this).off(".textdrag");
 			setTimeout(function() {
-				$self.removeAttr("data-dragging");
+				$textfield.removeAttr("data-dragging");
 			}, 0);
+			// history: changed value
+			var pos = $textfield.position();
+			self.addHistory($textfield.attr("id"), {
+				pos: {
+					left: pos.left - main.tools.toolbarWidth,
+					top: pos.top
+				}
+			});
 		}
 	});
 };
@@ -295,29 +317,17 @@ Text.prototype.inputKey = function(elements, eventType) {
 			$textfield = elements.t,
 			$label = elements.l,
 			
-			size = [],
 			val = $input.val(),
-			oldVal = $label.text(),
-			dataW = parseInt($textfield.attr("data-w")),
-			dataH = parseInt($textfield.attr("data-h"));
+			oldVal = $label.text();
 		
 		if (val.substr(-1) == "\n" || val.substr(-1) == "\r" || !val.length) val += " ";
 		$label.text(val);
 		
-		// exact values (float), important to prevent wraps on foreign clients
-		var clientRect = $label[0].getBoundingClientRect();
-		
-		if (dataW) size[0] = dataW;
-		else size[0] = clientRect["width"];
-		if (dataH) size[1] = dataH;
-		else size[1] = clientRect["height"];
-		$parent.css({
-			width: size[0],
-			height: size[1]
-		});
-		$input.css({
-			width: size[0] + (dataW ? 0 : 20),
-			height: size[1] + 5
+		var size = this.setInputSize({
+			t: $textfield,
+			p: $parent,
+			l: $label,
+			i: $input
 		});
 		
 		if (val != oldVal) {
@@ -353,6 +363,40 @@ Text.prototype.inputKey = function(elements, eventType) {
 /**
  * 
  */
+Text.prototype.setInputSize = function(elements, addW) {
+	addW = addW === undefined ? 20 : addW;
+	var $textfield = elements.t,
+		$parent = elements.p || $textfield.find(".parent"),
+		$input = elements.i || $parent.find("textarea"),
+		$label = elements.l || $textfield.find("label"),
+		
+		dataW = parseInt($textfield.attr("data-w")),
+		dataH = parseInt($textfield.attr("data-h")),
+		size = [];
+	
+	// exact values (float), important to prevent wraps on foreign clients
+	var clientRect = $label[0].getBoundingClientRect();
+	
+	if (dataW) size[0] = dataW;
+	else size[0] = clientRect["width"];
+	if (dataH) size[1] = dataH;
+	else size[1] = clientRect["height"];
+	
+	$parent.css({
+		width: size[0],
+		height: size[1]
+	});
+	$input.css({
+		width: size[0] + (dataW ? 0 : addW),
+		height: size[1] + 5
+	});
+	
+	return size;
+};
+
+/**
+ * 
+ */
 Text.prototype.inputFocus = function(elements) {
 	var $input = elements.i,
 		$parent = elements.p,
@@ -380,6 +424,8 @@ Text.prototype.inputFocus = function(elements) {
 			id: $textfield.attr("id"),
 			focus: true
 		});
+		
+		this.setInputSize(elements);
 		$input.focus();
 	}
 };
@@ -390,7 +436,8 @@ Text.prototype.inputFocus = function(elements) {
 Text.prototype.inputBlur = function(elements, events) {
 	var $input = elements.i,
 		$parent = elements.p,
-		$textfield = elements.t;
+		$textfield = elements.t,
+		id = $textfield.attr("id");
 	
 	if ($textfield.attr("data-auto-blur")) return;
 	if ($textfield.attr("data-prevent-blur")) {
@@ -407,13 +454,37 @@ Text.prototype.inputBlur = function(elements, events) {
 			id: $textfield.attr("id"),
 			focus: false
 		};
+		
+		this.setInputSize(elements, 0);
+		
 		if (!$input.attr("data-fixed")) {
 			if (!$input.val().length) {
 				$textfield.remove();
 				delete broadcast.focus;
 				broadcast.remove = true;
-			} else $input.attr("data-fixed", 1);
+			} else {
+				$input.attr("data-fixed", 1);
+				
+				// history: create
+				var pos = $textfield.position();
+				this.addHistory($textfield.attr("id"), {
+					pos: {
+						left: pos.left - main.tools.toolbarWidth,
+						top: pos.top
+					},
+					width: $textfield.attr("data-w"),
+					height: $textfield.attr("data-h"),
+					val: $input.val(),
+					color: $textfield.attr("data-color")
+				});
+			}
+		} else if (this.textfields[id].val != $input.val()) {
+			// history: changed value
+			this.addHistory($textfield.attr("id"), { val: $input.val() });
 		}
+		
+		this.textfields[id].val = $input.val();
+		
 		main.server.broadcast(BroadcastType.TMP, broadcast);
 	}
 };
@@ -421,8 +492,23 @@ Text.prototype.inputBlur = function(elements, events) {
 /**
  * 
  */
-Text.prototype.setColor = function($textfield, colorId) {
-	$textfield.find("label, textarea").css("color", main.tools.getColor(colorId));
+Text.prototype.setColor = function($textfield, color, history) {
+	color = main.tools.getColor(color);
+	$textfield.find("label, textarea").css("color", color);
+	$textfield.attr("data-color", color);
+	if (history) this.addHistory($textfield.attr("id"), { color: color });
+};
+
+/**
+ * 
+ */
+Text.prototype.addHistory = function(id, set) {
+	$.extend(this.textfields[id], set);
+	var h = $.extend({
+		toolNr: HistoryType.TEXT,
+		id: id
+	}, this.textfields[id]);
+	main.history.add(h);
 };
 
 /**
@@ -441,8 +527,58 @@ Text.prototype.broadcast = function(userId, parameters) {
 /**
  * 
  */
-Text.prototype.redraw = function(history) {
+Text.prototype.prepareRedraw = function() {
+	var self = this;
+	this.textfields = {};
+	$(".toolTextfield[data-own]").remove();
 	
+	$.each(this.textfieldsSafe, function() {
+		self.redraw(this);
+	});
+};
+
+/**
+ * 
+ */
+Text.prototype.redraw = function(history, board) {
+	if (board && board.temporary) {
+		this.textfieldsSafe[history.id] = $.extend({}, history);
+		return;
+	}
+	if (this.textfields[history.id]) {
+		// change
+		var $textfield = $("#" + history.id),
+			$parent = $textfield.find(".parent"),
+			$input = $parent.find("textarea"),
+			$label = $textfield.find("label");
+		if (history.val) {
+			var val = history.val;
+			if (val.substr(-1) == "\n" || val.substr(-1) == "\r" || !val.length) val += " ";
+			$label.text(val);
+			$input.val(history.val);
+		}
+		if (history.pos) {
+			$textfield.css({
+				left: (history.pos.left + main.tools.toolbarWidth) + "px",
+				top: history.pos.top + "px"
+			});
+		}
+		if (history.width) $textfield.attr("data-w", history.width).css("width", history.width);
+		if (history.height) $textfield.attr("data-h", history.height).css("height", history.height);
+		
+		this.setInputSize({
+			t: $textfield,
+			p: $parent,
+			l: $label,
+			i: $input
+		});
+		
+		if (history.color) this.setColor($textfield, history.color);
+	} else {
+		// create
+		this.createTextfield(history.id, history.val, history.pos.left + main.tools.toolbarWidth, history.pos.top,
+			history.width, history.height, history.color, true);
+	}
 };
 
 // register tool in main
