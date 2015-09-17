@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Test</title>
+		<script src="jsunit/app/jsUnitCore.js"></script>
+		<script src="../js/jq.js"></script>
+		<script src="../js/settings.js"></script>
+		<script src="../js/misc/Chat.ptt.js"></script>
+		<script>
+			// some settings
+			var BroadcastType = { index: 0 },
+				main = {
+					miscs: {},
+					server: {
+						getTime: function() {
+							return new Date().getTime();
+						},
+						broadcast: function() {
+							main.server.lastBroadcastArguments = arguments;
+						},
+						lastBroadcastArguments: null,
+						broadcasts: {},
+						connect: [],
+						disconnects: []
+					}
+				};
+			
+			function testChatCreation() {
+				var chat = new Chat(),
+					broadcastTypeName = null;
+				assertEquals("BroadcastType added?", BroadcastType.index, 1);
+				for (var x in BroadcastType) {
+					if (x != "index") {
+						broadcastTypeName = x
+						break;
+					}
+				}
+				
+				chat.submit();
+				assertNull("The message was empty, so no broadcast", main.server.lastBroadcastArguments);
+				
+				chat.$input.val("TestMessage");
+				chat.submit();
+				assertNotNull("Message broadcastet?", main.server.lastBroadcastArguments);
+				assertEquals("Correct BroadcastType?", BroadcastType[broadcastTypeName], main.server.lastBroadcastArguments[0]);
+				
+				assertEquals("One message sent at this time.", 1, Object.keys(chat.history).length);
+				
+				// receive message
+				main.server.broadcasts[BroadcastType[broadcastTypeName]]({
+					userId: 12,
+					data: main.server.lastBroadcastArguments[1]
+				});
+				assertEquals("Two messages in history.", 2, Object.keys(chat.history).length);
+				var keys = Object.keys(chat.history);
+				assertEquals("First message by own (userId 0).", 0, chat.history[keys[0]].u);
+				assertEquals("Second message by foreign (userId 12).", 12, chat.history[keys[1]].u);
+			}
+		</script>
+	</head>
+	<body></body>
+</html>

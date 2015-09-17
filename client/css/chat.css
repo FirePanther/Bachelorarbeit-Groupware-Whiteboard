@@ -1,0 +1,19 @@
+.chat { z-index: 100; cursor: pointer; position: fixed; right: 50px; bottom: 0; width: 300px; max-width: 50%; background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); /* fixes chrome bug: unclickable tools after scrolling */ -webkit-transform: translateZ(0); }
+
+.chat::before { content: "Chat"; text-align: center; color: white; opacity: .5; font-size: 14px; margin: 5px; display: block; }
+
+.chat.mini { width: 100px; }
+
+.chat.mini .history, .chat.mini form { display: none !important; }
+
+.chat .history { background: white; margin: 0 5px; font-size: 12px; padding: 10px; cursor: default; height: 50vh; max-height: 300px; overflow-y: auto; }
+
+.chat .history .msg .u { color: red; }
+
+.chat .history .msg .u::after { content: ": "; }
+
+.chat .history .msg .u.own { color: blue; }
+
+.chat form { cursor: default; margin: 0; padding: 0; position: relative; height: 26px; }
+
+.chat form input { margin: 1px 5px; outline: none; padding: 5px 10px; width: calc(100% - 30px); font-size: 12px; height: 14px; border: 0; }

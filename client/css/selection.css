@@ -1,0 +1,13 @@
+.selection { position: absolute; z-index: 90; }
+
+.selection .top, .selection .bottom { background: url(../img/border_horizontal.gif) repeat-x; position: absolute; height: 1px; left: 0; right: 0; }
+
+.selection .left, .selection .right { background: url(../img/border_vertical.gif) repeat-y; position: absolute; width: 1px; top: 0; bottom: 0; }
+
+.selection .top { top: -1px; }
+
+.selection .right { right: -1px; }
+
+.selection .bottom { bottom: -1px; }
+
+.selection .left { left: -1px; }

@@ -1,0 +1,76 @@
+.chat {
+	&::before {
+		content: "Chat";
+		text-align: center;
+		color: white;
+		opacity: .5;
+		font-size: 14px;
+		margin: 5px;
+		display: block;
+	}
+	
+	z-index: 100;
+	cursor: pointer;
+	position: fixed;
+	right: 50px;
+	bottom: 0;
+	width: 300px;
+	max-width: 50%;
+	background-image: linear-gradient(to bottom, rgba(51,51,51,1) 0%, rgba(85,85,85,1) 100%);
+	
+	/* fixes chrome bug: unclickable tools after scrolling */
+	-webkit-transform: translateZ(0);
+	
+	&.mini {
+		width: 100px;
+		.history, form {
+			display: none !important;
+		}
+	}
+	
+	.history {
+		background: white;
+		margin: 0 5px;
+		font-size: 12px;
+		padding: 10px;
+		cursor: default;
+		height: 50vh;
+		max-height: 300px;
+		overflow-y: auto;
+		
+		.msg {
+			.u {
+				&::after {
+					content: ": ";
+				}
+				
+				color: red;
+				
+				&.own {
+					color: blue;
+				}
+			}
+			.t {
+				
+			}
+		}
+	}
+	
+	form {
+		cursor: default;
+		margin: 0;
+		padding: 0;
+		position: relative;
+		height: 26px;
+		
+		input {
+			margin: 1px 5px;
+			outline: none;
+			padding: 5px 10px;
+			width: calc(100% - 30px);
+			font-size: 12px;
+			height: 14px;
+			border: 0;
+		}
+	}
+}

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+	<head>
+		<title>BoardTest</title>
+		<script src="jsunit/app/jsUnitCore.js"></script>
+		<script src="../js/jq.js"></script>
+		<script src="../js/settings.js"></script>
+		<script src="../js/Board.ptt.js?b"></script>
+		<script>
+			var main = 0;
+			function testTmpBoard() {
+				var board = new Board(),
+					tmpBoard = board.tmpBoard(12),
+					randomValue = Math.random();
+				assertTrue(tmpBoard.temporary);
+				tmpBoard.cache.sameTmpBoardTest = randomValue;
+				
+				var tmpBoard2 = board.tmpBoard(12),
+					tmpBoard3 = board.tmpBoard(13);
+				assertEquals("Check if correctly set.", tmpBoard.cache.sameTmpBoardTest, randomValue);
+				assertEquals("Should be the same, because the IDs are the same.", tmpBoard.cache.sameTmpBoardTest, tmpBoard2.cache.sameTmpBoardTest);
+				assertNotEquals("Shouldn't be the same, because the IDs are different.", tmpBoard.cache.sameTmpBoardTest, tmpBoard3.cache.sameTmpBoardTest);
+				assertUndefined("Should be undefined as well.", tmpBoard3.cache.sameTmpBoardTest);
+				
+				assertEquals("3 tmpBoards, the first one will be created automatically from the constructor.", Object.keys(board.tmpBoards).length, 3);
+				
+				// remove
+				tmpBoard.remove();
+				assertTrue("The first variable should now be deleted.", tmpBoard.deleted);
+				assertTrue("The second variable should be deleted, too.", tmpBoard2.deleted);
+			}
+		</script>
+	</head>
+	<body></body>
+</html>

@@ -1,0 +1,95 @@
+.toolTextfield {
+	position: absolute;
+	padding: 3px;
+	cursor: pointer;
+	border-radius: 3px;
+	z-index: 1;
+	
+	/* dashed border (not animated) */
+	.textselector {
+		opacity: .3;
+		position: absolute;
+	}
+	.top, .bottom {
+		background: url(../img/border_horizontal.jpg) repeat-x;
+		height: 1px;
+		left: 0;
+		right: 0;
+	}
+	.left, .right {
+		background: url(../img/border_vertical.jpg) repeat-y;
+		width: 1px;
+		top: 0;
+		bottom: 0;
+	}
+	.top {
+		top: -1px;
+	}
+	.right {
+		right: -1px;
+	}
+	.bottom {
+		bottom: -1px;
+	}
+	.left {
+		left: -1px;
+	}
+	
+	&.focus {
+		background-color: rgba(255, 255, 255, .8);
+		backdrop-filter: invert;
+		z-index: 2;
+		
+		label {
+			opacity: 0;
+		}
+	}
+	&:not(.focus) {
+		textarea {
+			opacity: 0;
+			cursor: pointer;
+		}
+	}
+	
+	label, textarea {
+		border: none;
+		outline: none;
+		padding: 0;
+		margin: 0;
+		background-color: transparent;
+		resize: none;
+	}
+	label {
+		float: left;
+		cursor: pointer;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		display: inline-block;
+		overflow: hidden;
+	}
+	.parent {
+		position: absolute;
+		z-index: 1;
+		margin: 0;
+		padding: 0;
+	}
+}
+
+body:not(.toolText) .toolTextfield {
+	pointer-events: none;
+	.textselector {
+		display: none;
+	}
+	&.textFocus .textselector {
+		display: block;
+	}
+}
+
+.toolbar .tool .toolText {
+	font-family: times;
+	font-size: 24px;
+	float: left;
+	width: 100%;
+	text-align: center;
+	margin-top: -3px;
+}

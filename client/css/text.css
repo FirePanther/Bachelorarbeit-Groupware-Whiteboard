@@ -1,0 +1,35 @@
+.toolTextfield { position: absolute; padding: 3px; cursor: pointer; border-radius: 3px; z-index: 1; /* dashed border (not animated) */ }
+
+.toolTextfield .textselector { opacity: .3; position: absolute; }
+
+.toolTextfield .top, .toolTextfield .bottom { background: url(../img/border_horizontal.jpg) repeat-x; height: 1px; left: 0; right: 0; }
+
+.toolTextfield .left, .toolTextfield .right { background: url(../img/border_vertical.jpg) repeat-y; width: 1px; top: 0; bottom: 0; }
+
+.toolTextfield .top { top: -1px; }
+
+.toolTextfield .right { right: -1px; }
+
+.toolTextfield .bottom { bottom: -1px; }
+
+.toolTextfield .left { left: -1px; }
+
+.toolTextfield.focus { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: invert; z-index: 2; }
+
+.toolTextfield.focus label { opacity: 0; }
+
+.toolTextfield:not(.focus) textarea { opacity: 0; cursor: pointer; }
+
+.toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background-color: transparent; resize: none; }
+
+.toolTextfield label { float: left; cursor: pointer; white-space: pre-wrap; word-wrap: break-word; display: inline-block; overflow: hidden; }
+
+.toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
+
+body:not(.toolText) .toolTextfield { pointer-events: none; }
+
+body:not(.toolText) .toolTextfield .textselector { display: none; }
+
+body:not(.toolText) .toolTextfield.textFocus .textselector { display: block; }
+
+.toolbar .tool .toolText { font-family: times; font-size: 24px; float: left; width: 100%; text-align: center; margin-top: -3px; }

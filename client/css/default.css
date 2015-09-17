@@ -1,4 +1,6 @@
-body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); height: 100vh; margin: 0; padding: 0; overflow: hidden; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+body { font-family: verdana; height: 100vh; margin: 0; padding: 0; background-color: #aaa; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; }
+
+.clear { clear: both; }
 
 .selectable { user-select: text; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; }
 
@@ -10,78 +12,8 @@ body { background-image: linear-gradient(to bottom, #333333 0%, #555555 100%); h
 
 .click-through { pointer-events: none; }
 
-.selection { position: absolute; z-index: 90; }
-
-.selection .top, .selection .bottom { background: url(../img/border_horizontal.gif) repeat-x; position: absolute; height: 1px; left: 0; right: 0; }
-
-.selection .left, .selection .right { background: url(../img/border_vertical.gif) repeat-y; position: absolute; width: 1px; top: 0; bottom: 0; }
-
-.selection .top { top: -1px; }
-
-.selection .right { right: -1px; }
-
-.selection .bottom { bottom: -1px; }
-
-.selection .left { left: -1px; }
-
-.cursor { position: absolute; z-index: 100; }
-
-.cursor .cursorLabel { font-family: verdana; font-size: 8px; position: absolute; left: 14px; }
-
-.cursor .pointer { position: absolute; background-image: url(../img/arrow.png); background-size: contain; width: 14px; height: 20px; opacity: .5; top: -4px; left: -3px; }
-
 .left { position: absolute; left: 0; top: 0; bottom: 0; }
 
-body:not(.toolText) .toolTextfield { pointer-events: none; }
+input[type="range"] { max-width: 100%; background: #696969; height: 15px; -webkit-appearance: none; border-radius: 8px; outline: none; margin: 0; }
 
-body:not(.toolText) .toolTextfield .textselector:not(.dontHide) { display: none; }
-
-.toolTextfield { position: absolute; padding: 3px; cursor: pointer; border-radius: 3px; z-index: 1; /* dashed border (not animated) */ }
-
-.toolTextfield .textselector { opacity: .3; position: absolute; }
-
-.toolTextfield .top, .toolTextfield .bottom { background: url(../img/border_horizontal.jpg) repeat-x; height: 1px; left: 0; right: 0; }
-
-.toolTextfield .left, .toolTextfield .right { background: url(../img/border_vertical.jpg) repeat-y; width: 1px; top: 0; bottom: 0; }
-
-.toolTextfield .top { top: -1px; }
-
-.toolTextfield .right { right: -1px; }
-
-.toolTextfield .bottom { bottom: -1px; }
-
-.toolTextfield .left { left: -1px; }
-
-.toolTextfield.focus { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: invert; z-index: 2; }
-
-.toolTextfield.focus label { opacity: 0; }
-
-.toolTextfield:not(.focus) textarea { opacity: 0; cursor: pointer; }
-
-.toolTextfield label, .toolTextfield textarea { border: none; outline: none; padding: 0; margin: 0; background-color: transparent; resize: none; font-size: 20px; font-family: verdana; }
-
-.toolTextfield label { cursor: pointer; white-space: pre-wrap; word-wrap: break-word; display: inline-block; overflow: hidden; }
-
-.toolTextfield .parent { position: absolute; z-index: 1; margin: 0; padding: 0; }
-
-.toolbar .selected { padding: 2px !important; box-shadow: rgba(255, 255, 255, 0.7) 0 0 2px 1px inset !important; }
-
-.toolbar > * { margin: 10px 0; padding: 2px; }
-
-.toolbar > *::after { content: ""; display: block; clear: left; }
-
-.toolbar .tool, .toolbar .colors .color { float: left; padding: 4px; box-shadow: transparent 0 0 2px 1px inset; transition: all 100ms ease-in-out; width: 50%; box-sizing: border-box; height: 31px; cursor: pointer; }
-
-.toolbar .tool { border-radius: 10px; text-align: center; }
-
-.toolbar .tool img { max-width: 100%; max-height: 100%; }
-
-.toolbar .tool .toolText { color: white; font-family: times; font-size: 24px; }
-
-.toolbar .tool.tool-unclickable { opacity: .3; }
-
-.toolbar .colors .colorpicker { box-sizing: border-box; width: 100%; height: 31px; text-transform: uppercase; margin-bottom: 3px; }
-
-.toolbar .colors .color:not(.selected):hover { opacity: .8; }
-
-.toolbar .colors .color div { width: 100%; height: 100%; }
+input[type="range"]::-webkit-slider-thumb { width: 15px; height: 15px; -webkit-appearance: none; border-radius: 8px; background: #CCC; }

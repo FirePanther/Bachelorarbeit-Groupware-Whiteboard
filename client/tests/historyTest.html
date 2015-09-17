@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+	<head>
+		<title>History Test</title>
+		<script src="jsunit/app/jsUnitCore.js"></script>
+		<script src="../js/jq.js"></script>
+		<script src="../js/settings.js"></script>
+		<script src="../js/functions.js"></script>
+		<script>
+			var main = {
+				registerTool: function(){},
+				server: {
+					getTime: function() {
+						return new Date().getTime();
+					}
+				},
+				tools: {
+					toolbarWidth: 0
+				}
+			};
+		</script>
+		<script src="../js/Tools.ptt.js"></script>
+		<script src="../js/tools/a.Draw.ptt.js"></script>
+		<script src="../js/History.ptt.js"></script>
+		<script>
+			function testHistoryType() {
+				var history = new History(),
+					testToolObject = new Draw(),
+					index = 0;
+				for (var testToolName in testToolObject.toolSettings) {
+					index++;
+					testToolNr = history.registerTool(testToolObject, testToolName);
+					assertEquals("Check if the history returns the right value.", index, testToolNr);
+				}
+				assertFalse("Shouldn't be 0, else the tool has an error.", index === 0);
+				assertEquals("Check if the HistoryType is up to date.", index, HistoryType.properties.index);
+			}
+			
+			function testHistoryEntries() {
+				var history = new History();
+				assertNull("Should be empty.", history.last());
+				history.add({ a: "First", b: "Second", c: "Third" });
+				// userId will be added automatically
+				assertEquals("Check if the keys are like expected", "a,b,c,userId", Object.keys(history.last()).join(","));
+				assertEquals("Check if the values exist", "Second", history.last().b);
+				assertEquals("Own userId is 0", 0, history.last().userId);
+				
+				history.addById(1, 10, { d: "Test" });
+				
+				assertEquals("The last one should be the same", "Third", history.last().c);
+				
+				assertEquals("Check if added properly", 10, history.history[1].userId);
+			}
+		</script>
+	</head>
+	<body></body>
+</html>
