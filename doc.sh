@@ -1,1 +1,1 @@
-node_modules/.bin/jsdoc -d jsdoc -c conf.json -r client
+node_modules/.bin/jsdoc -d jsdoc -c conf.json -R README.md -r client
