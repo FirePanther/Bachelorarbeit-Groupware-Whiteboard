@@ -1,5 +1,6 @@
 /**
- * 
+ * Creates a chat element to chat with other clients.
+ * @constructor
  */
 function Chat() {
 	var self = this;
@@ -40,7 +41,8 @@ function Chat() {
 };
 
 /**
- * 
+ * Initializes some server settings and functions to receive chat messages
+ * and names.
  */
 Chat.prototype.initServer = function() {
 	var self = this;
@@ -71,7 +73,7 @@ Chat.prototype.initServer = function() {
 };
 
 /**
- * 
+ * Submits and broadcasts the own input. Clears the input.
  */
 Chat.prototype.submit = function() {
 	var val = this.$input.val(),
@@ -91,7 +93,7 @@ Chat.prototype.submit = function() {
 };
 
 /**
- * 
+ * Initializes some mouse events to hide the chat while drawing.
  */
 Chat.prototype.init = function() {
 	var self = this;
@@ -105,7 +107,7 @@ Chat.prototype.init = function() {
 };
 
 /**
- * 
+ * Shows the chat. Adds an opacity transition if the hide time is over 300ms.
  */
 Chat.prototype.show = function() {
 	if (this.hideTime) {
@@ -121,7 +123,7 @@ Chat.prototype.show = function() {
 };
 
 /**
- * 
+ * Hides the chat and remembers, when the chat was hidden.
  */
 Chat.prototype.hide = function() {
 	this.hideTime = main.server.getTime();
@@ -129,7 +131,7 @@ Chat.prototype.hide = function() {
 };
 
 /**
- * 
+ * Validates the user name. Checks it before sending and after receiving.
  */
 Chat.prototype.validateName = function(name) {
 	name = name
@@ -142,7 +144,7 @@ Chat.prototype.validateName = function(name) {
 };
 
 /**
- * 
+ * Broadcasts a message with the date.
  */
 Chat.prototype.broadcast = function(date, msg) {
 	main.server.broadcast(BroadcastType.CHAT, {
@@ -152,7 +154,7 @@ Chat.prototype.broadcast = function(date, msg) {
 };
 
 /**
- * 
+ * Refreshes the history and displays all messages.
  */
 Chat.prototype.refresh = function() {
 	var keys = Object.keys(this.history), klen = keys.length, limit = 100;

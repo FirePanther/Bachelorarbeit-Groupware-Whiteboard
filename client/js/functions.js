@@ -1,8 +1,17 @@
+/**
+ * Returns the string with the first char as lower case.
+ * @param {string} string
+ */
 function lcfirst(string) {
 	string += "";
 	var first = string.charAt(0).toLowerCase();
 	return first + string.substr(1);
 }
+
+/**
+ * Returns the string with the first char as upper case.
+ * @param {string} string
+ */
 function ucfirst(string) {
 	string += "";
 	var first = string.charAt(0).toUpperCase();
@@ -10,7 +19,9 @@ function ucfirst(string) {
 }
 
 /**
- * 
+ * Creates a unique hash of an object.
+ * @param {Object} obj
+ * @returns {int}
  */
 function hash(obj) {
 	var string = JSON.stringify(obj);

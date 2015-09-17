@@ -1,7 +1,7 @@
 /**
- * The Board class manages the board canvas element.
+ * The Board class manages the board canvas elements.
  * @constructor
- * @param {jQuery} [$board] - The canvas jQuery element.
+ * @param {Object} [$board] - The canvas jQuery element.
  */
 function Board($board) {
 	this.context = null;
@@ -32,7 +32,11 @@ function Board($board) {
 };
 
 /**
- * 
+ * Initializes some required broadcast types for temporary broadcasts,
+ * saved (fixed) broadcasts and for the undo and redo tools.
+ * Calls the broadcast methods of the tools if TMP broadcasts are received.
+ * Calls the removeTmp (if exist) and redraw methods of the tools if SAVE
+ * broadcasts are received. Also adds the SAVE broadcast to the history.
  */
 Board.prototype.initBroadcastTypes = function() {
 	var self = this;
@@ -68,8 +72,10 @@ Board.prototype.initBroadcastTypes = function() {
 };
 
 /**
- * Creates a temporary board (e.g. for temporary drawings by users)
- * whole boards contain whole drawing informations and are invisible (and have the maximum size)
+ * Creates or selects (if already created) a temporary board (e.g. for temporary
+ * drawings by foreign clients).
+ * @param {string} boardId - The ID of the board. Not required if whole=true.
+ * @param {boolean} [whole=false] - whole boards contain whole drawing informations and are invisible.
  */
 Board.prototype.tmpBoard = function(boardId, whole) {
 	if (whole) {
@@ -113,7 +119,8 @@ Board.prototype.tmpBoard = function(boardId, whole) {
 };
 
 /**
- * Removes the element and the item
+ * Removes the temporary board element and the item.
+ * @param {string} boardId - The ID of the board.
  */
 Board.prototype.removeTmpBoard = function(boardId) {
 	this.tmpBoards[boardId].$element.remove();
@@ -122,8 +129,8 @@ Board.prototype.removeTmpBoard = function(boardId) {
 };
 
 /**
- * Selects the board (canvas) element.
- * @param {jQuery} $board - The canvas jQuery element.
+ * Selects the board (canvas) element. Sets the dimensions to the maximum size.
+ * @param {Object} $board - The canvas jQuery element.
  */
 Board.prototype.setBoard = function($board) {
 	if ($board.length > 1) $board = $($board[0]);
@@ -140,14 +147,15 @@ Board.prototype.setBoard = function($board) {
 };
 
 /**
- * Clears the canvas.
+ * Clears the main canvas.
  */
 Board.prototype.clear = function() {
 	this.context.clearRect(0, 0, BOARDMAXWIDTH, BOARDMAXHEIGHT);
 };
 
 /**
- * 
+ * Marks the last not already undone item of a user in the history as "undone".
+ * @param {string} userId - The last item of which user?
  */
 Board.prototype.undo = function(userId) {
 	userId = userId || 0;
@@ -169,7 +177,8 @@ Board.prototype.undo = function(userId) {
 };
 
 /**
- * 
+ * Deletes the "undone" mark of the last undone item in the history of a user.
+ * @param {string} userId - The last item of which user?
  */
 Board.prototype.redo = function(userId) {
 	userId = userId || 0;
@@ -189,7 +198,8 @@ Board.prototype.redo = function(userId) {
 };
 
 /**
- * 
+ * Checks if there are undone and undoneable history items and shows or hides
+ * the tool buttons in the toolbar.
  */
 Board.prototype.undoButtonsVisibility = function(keep) {
 	keep = keep || false;
@@ -221,7 +231,7 @@ Board.prototype.undoButtonsVisibility = function(keep) {
 };
 
 /**
- * 
+ * Creates and injects the undo and redo buttons into the toolbar.
  */
 Board.prototype.addUndoButtons = function() {
 	var self = this,
@@ -245,7 +255,8 @@ Board.prototype.addUndoButtons = function() {
 };
 
 /**
- * creates image of history, removes history items
+ * Creates an image of the first (old) history items, removes history these items.
+ * This prevents lags and history overflows.
  */
 Board.prototype.drawHistory = function() {
 	var historyLen = 0;
@@ -268,7 +279,8 @@ Board.prototype.drawHistory = function() {
 };
 
 /**
- * Redraw the whole board.
+ * Prepare to redraw. Calls the prepareRedraw method of the tools (if exist) so
+ * they can prepare (e.g. remove elements) before redrawing.
  */
 Board.prototype.prepareRedraw = function(h, prepared) {
 	// prepare redraw (remove some stuff)
@@ -282,7 +294,8 @@ Board.prototype.prepareRedraw = function(h, prepared) {
 };
 
 /**
- * Redraw the whole board.
+ * Redraw the whole board. Calls the required redraw method of the tools from the
+ * history in the right order.
  */
 Board.prototype.redraw = function() {
 	this.clear();
@@ -296,10 +309,6 @@ Board.prototype.redraw = function() {
 		prepared = this.prepareRedraw(h, prepared);
 		
 		if (h.undone) continue;
-		/*if (h.whole) {
-			this.context.drawImage(this.tmpBoard(h.index, true).$element[0], 0, 0);
-		} else if (HistoryType.properties[h.toolNr]) {*/
 		HistoryType.properties[h.toolNr].toolObject.redraw(h);
-		// }
 	}
 };

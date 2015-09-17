@@ -49,7 +49,7 @@
 
 
 <div class="description">
-    The Board class manages the board canvas element.
+    The Board class manages the board canvas elements.
 </div>
 
 
@@ -93,7 +93,7 @@
             <td class="type">
             
                 
-<span class="param-type">jQuery</span>
+<span class="param-type">Object</span>
 
 
             
@@ -154,7 +154,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line6">line 6</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line6">line 6</a>
     </li></ul></dd>
     
 
@@ -203,6 +203,88 @@
 
     
 
+    <h4 class="name" id="addUndoButtons"><span class="type-signature"></span>addUndoButtons<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Creates and injects the undo and redo buttons into the toolbar.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line236">line 236</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
@@ -210,7 +292,7 @@
 
 
 <div class="description">
-    Clears the canvas.
+    Clears the main canvas.
 </div>
 
 
@@ -254,7 +336,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line38">line 38</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line152">line 152</a>
     </li></ul></dd>
     
 
@@ -285,14 +367,15 @@
 
     
 
-    <h4 class="name" id="redraw"><span class="type-signature"></span>redraw<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="drawHistory"><span class="type-signature"></span>drawHistory<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Redraw the whole board.
+    Creates an image of the first (old) history items, removes history these items.
+This prevents lags and history overflows.
 </div>
 
 
@@ -336,7 +419,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line45">line 45</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line261">line 261</a>
     </li></ul></dd>
     
 
@@ -367,14 +450,183 @@
 
     
 
-    <h4 class="name" id="registerTool"><span class="type-signature"></span>registerTool<span class="signature">({Object))</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="initBroadcastTypes"><span class="type-signature"></span>initBroadcastTypes<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Registers (adds) a new tool.
+    Initializes some required broadcast types for temporary broadcasts,
+saved (fixed) broadcasts and for the undo and redo tools.
+Calls the broadcast methods of the tools if TMP broadcasts are received.
+Calls the removeTmp (if exist) and redraw methods of the tools if SAVE
+broadcasts are received. Also adds the SAVE broadcast to the history.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="prepareRedraw"><span class="type-signature"></span>prepareRedraw<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Prepare to redraw. Calls the prepareRedraw method of the tools (if exist) so
+they can prepare (e.g. remove elements) before redrawing.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line285">line 285</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="redo"><span class="type-signature"></span>redo<span class="signature">(userId)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Deletes the "undone" mark of the last undone item in the history of a user.
 </div>
 
 
@@ -410,10 +662,15 @@
 
         <tr>
             
-                <td class="name"><code>{Object)</code></td>
+                <td class="name"><code>userId</code></td>
             
 
             <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
             
             </td>
 
@@ -421,7 +678,7 @@
 
             
 
-            <td class="description last">tool - The object of the tool.</td>
+            <td class="description last">The last item of which user?</td>
         </tr>
 
     
@@ -462,7 +719,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line53">line 53</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line183">line 183</a>
     </li></ul></dd>
     
 
@@ -493,14 +750,15 @@
 
     
 
-    <h4 class="name" id="resize"><span class="type-signature"></span>resize<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="redraw"><span class="type-signature"></span>redraw<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Resizes the canvas element to the window size.
+    Redraw the whole board. Calls the required redraw method of the tools from the
+history in the right order.
 </div>
 
 
@@ -544,7 +802,138 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line28">line 28</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="removeTmpBoard"><span class="type-signature"></span>removeTmpBoard<span class="signature">(boardId)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Removes the temporary board element and the item.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>boardId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The ID of the board.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -582,7 +971,7 @@
 
 
 <div class="description">
-    Selects the board (canvas) element.
+    Selects the board (canvas) element. Sets the dimensions to the maximum size.
 </div>
 
 
@@ -624,7 +1013,7 @@
             <td class="type">
             
                 
-<span class="param-type">jQuery</span>
+<span class="param-type">Object</span>
 
 
             
@@ -675,7 +1064,408 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Board.class.js.html">Board.class.js</a>, <a href="Board.class.js.html#line18">line 18</a>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="tmpBoard"><span class="type-signature"></span>tmpBoard<span class="signature">(boardId, whole<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Creates or selects (if already created) a temporary board (e.g. for temporary
+drawings by foreign clients).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>boardId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The ID of the board. Not required if whole=true.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>whole</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">whole boards contain whole drawing informations and are invisible.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="undo"><span class="type-signature"></span>undo<span class="signature">(userId)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Marks the last not already undone item of a user in the history as "undone".
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The last item of which user?</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line160">line 160</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="undoButtonsVisibility"><span class="type-signature"></span>undoButtonsVisibility<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Checks if there are undone and undoneable history items and shows or hides
+the tool buttons in the toolbar.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Board.ptt.js.html">Board.ptt.js</a>, <a href="Board.ptt.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -717,13 +1507,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="Main.html">Main</a></li></ul><h3>Global</h3><ul><li><a href="global.html#HistoryType">HistoryType</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Chat.html">Chat</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Debug.html">Debug</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="Main.html">Main</a></li><li><a href="Selection.html">Selection</a></li><li><a href="Server.html">Server</a></li><li><a href="Shape.html">Shape</a></li><li><a href="Table.html">Table</a></li><li><a href="Text.html">Text</a></li><li><a href="Tools.html">Tools</a></li></ul><h3>Global</h3><ul><li><a href="global.html#BOARDMAXHEIGHT">BOARDMAXHEIGHT</a></li><li><a href="global.html#BOARDMAXWIDTH">BOARDMAXWIDTH</a></li><li><a href="global.html#BroadcastType">BroadcastType</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#HistoryType">HistoryType</a></li><li><a href="global.html#lcfirst">lcfirst</a></li><li><a href="global.html#main">main</a></li><li><a href="global.html#MULTIPLIER">MULTIPLIER</a></li><li><a href="global.html#ToolSettingType">ToolSettingType</a></li><li><a href="global.html#ucfirst">ucfirst</a></li><li><a href="global.html#UNDOSTEPS">UNDOSTEPS</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Jul 15 2015 01:53:51 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 17 2015 23:46:33 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

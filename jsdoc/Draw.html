@@ -42,14 +42,14 @@
 
     
 
-    <h4 class="name" id="Draw"><span class="type-signature"></span>new Draw<span class="signature">($board<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Draw"><span class="type-signature"></span>new Draw<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    The Drawing Handler. Allows to draw on a board.
+    The Drawing prototype allows to draw on a board.
 </div>
 
 
@@ -58,67 +58,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>$board</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">jQuery</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The canvas jQuery element.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -154,7 +93,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tools_Draw.class.js.html">tools/Draw.class.js</a>, <a href="tools_Draw.class.js.html#line6">line 6</a>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -493,7 +432,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tools_Draw.class.js.html">tools/Draw.class.js</a>, <a href="tools_Draw.class.js.html#line61">line 61</a>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line152">line 152</a>
     </li></ul></dd>
     
 
@@ -524,7 +463,92 @@
 
     
 
-    <h4 class="name" id="draw"><span class="type-signature"></span>draw<span class="signature">(position, state)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="broadcast"><span class="type-signature"></span>broadcast<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line296">line 296</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Board.html#initBroadcastTypes">Board#initBroadcastTypes</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="draw"><span class="type-signature"></span>draw<span class="signature">(toolNr, thickness, position, state, color, opacity, userId, board)</span><span class="type-signature"></span></h4>
 
     
 
@@ -563,6 +587,52 @@
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>toolNr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The tool identifier.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thickness</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The thickness of the tool.</td>
+        </tr>
+
     
 
         <tr>
@@ -648,7 +718,7 @@
 
             
 
-            <td class="description last">The x position of the mouse.</td>
+            <td class="description last">The y position of the mouse.</td>
         </tr>
 
     
@@ -777,201 +847,79 @@
         </tr>
 
     
-    </tbody>
-</table>
 
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tools_Draw.class.js.html">tools/Draw.class.js</a>, <a href="tools_Draw.class.js.html#line78">line 78</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
+        <tr>
+            
+                <td class="name"><code>color</code></td>
             
 
-    
-
-    <h4 class="name" id="initEvents"><span class="type-signature"></span>initEvents<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
 
 
-<div class="description">
-    Initializes the mouse events for the board.
-</div>
+            
+            </td>
 
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tools_Draw.class.js.html">tools/Draw.class.js</a>, <a href="tools_Draw.class.js.html#line14">line 14</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
             
 
-    
+            
 
-    <h4 class="name" id="redraw"><span class="type-signature"></span>redraw<span class="signature">(history)</span><span class="type-signature"></span></h4>
+            <td class="description last"></td>
+        </tr>
 
-    
-
-
-
-<div class="description">
-    Draws the whole "current" drawing (from mousedown to mouseup), called by the
-board class.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>history</code></td>
+                <td class="name"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user who drawed this, userId -1 means "redraw".</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>board</code></td>
             
 
             <td class="type">
@@ -987,7 +935,7 @@ board class.
 
             
 
-            <td class="description last">Contains the whole "current" drawing.</td>
+            <td class="description last">The board object where to draw.</td>
         </tr>
 
     
@@ -1028,12 +976,1332 @@ board class.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="tools_Draw.class.js.html">tools/Draw.class.js</a>, <a href="tools_Draw.class.js.html#line108">line 108</a>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line176">line 176</a>
     </li></ul></dd>
     
 
     
 
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="drawAction"><span class="type-signature"></span>drawAction<span class="signature">(event, begin<span class="signature-attributes">opt</span>, setState<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Saves the whole drawing action, adds to the history and broadcasts.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The mouse event.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>begin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Is this the beginning of the drawing? (e.g. for mousedown and mouseenter)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setState</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">The state of the mouse (see state@"Draw::addHistory" or state@"Draw::draw").</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line109">line 109</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="drawContinue"><span class="type-signature"></span>drawContinue<span class="signature">(redraw, curBoard, position)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Continues the drawing. Draws the lines.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>redraw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">If this is a redraw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>curBoard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The board object where to draw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current position of the mouse.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The x position of the mouse.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The y position of the mouse.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line264">line 264</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="drawEnd"><span class="type-signature"></span>drawEnd<span class="signature">(redraw, curBoard, position)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Finishes the drawing. If there is no drawing (just a click without mouse move),
+there will be added a dot.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>redraw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">If this is a redraw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>curBoard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The board object where to draw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current position of the mouse.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The x position of the mouse.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The y position of the mouse.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line284">line 284</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="drawStart"><span class="type-signature"></span>drawStart<span class="signature">(redraw, toolNr, curBoard, thickness, position, color, opacity)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Starts the drawing. Sets some options and initializes some variables.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>redraw</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">If this is a redraw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>toolNr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The tool identifier.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>curBoard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The board object where to draw.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thickness</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The thickness of the tool.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>position</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The current position of the mouse.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>0</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The x position of the mouse.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>1</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The y position of the mouse.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opacity</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="initEvents"><span class="type-signature"></span>initEvents<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line69">line 69</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Tools.html#selectTool">Tools#selectTool</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="redraw"><span class="type-signature"></span>redraw<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line310">line 310</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Board.html#redraw">Board#redraw</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="removeTmp"><span class="type-signature"></span>removeTmp<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tools_a.Draw.ptt.js.html">tools/a.Draw.ptt.js</a>, <a href="tools_a.Draw.ptt.js.html#line303">line 303</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Board.html#initBroadcastTypes">Board#initBroadcastTypes</a></li>
+        </ul>
+    </dd>
     
 
     
@@ -1070,13 +2338,13 @@ board class.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="Main.html">Main</a></li></ul><h3>Global</h3><ul><li><a href="global.html#HistoryType">HistoryType</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Chat.html">Chat</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Debug.html">Debug</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="Main.html">Main</a></li><li><a href="Selection.html">Selection</a></li><li><a href="Server.html">Server</a></li><li><a href="Shape.html">Shape</a></li><li><a href="Table.html">Table</a></li><li><a href="Text.html">Text</a></li><li><a href="Tools.html">Tools</a></li></ul><h3>Global</h3><ul><li><a href="global.html#BOARDMAXHEIGHT">BOARDMAXHEIGHT</a></li><li><a href="global.html#BOARDMAXWIDTH">BOARDMAXWIDTH</a></li><li><a href="global.html#BroadcastType">BroadcastType</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#HistoryType">HistoryType</a></li><li><a href="global.html#lcfirst">lcfirst</a></li><li><a href="global.html#main">main</a></li><li><a href="global.html#MULTIPLIER">MULTIPLIER</a></li><li><a href="global.html#ToolSettingType">ToolSettingType</a></li><li><a href="global.html#ucfirst">ucfirst</a></li><li><a href="global.html#UNDOSTEPS">UNDOSTEPS</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Wed Jul 15 2015 01:53:51 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 17 2015 23:46:33 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

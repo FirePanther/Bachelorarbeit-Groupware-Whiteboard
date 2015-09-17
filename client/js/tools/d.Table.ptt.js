@@ -1,5 +1,6 @@
 /**
- *
+ * The Table prototype allows creating tables with columns and rows.
+ * @constructor
  */
 function Table() {
 	this.toolSettings = {
@@ -26,7 +27,7 @@ function Table() {
 };
 
 /**
- * 
+ * @see {@link Tools#selectTool}
  */
 Table.prototype.initEvents = function(toolNr) {
 	$("body").addClass("toolTable");
@@ -121,7 +122,7 @@ Table.prototype.initEvents = function(toolNr) {
 };
 
 /**
- * 
+ * @see {@link Tools#selectTool}
  */
 Table.prototype.deinitEvents = function() {
 	$("body").removeClass("toolTable");
@@ -131,7 +132,7 @@ Table.prototype.deinitEvents = function() {
 };
 
 /**
- * 
+ * @see {@link Tools#callColorEvents}
  */
 Table.prototype.colorChanged = function(color, opacity, event) {
 	if (this.selected) {
@@ -146,7 +147,8 @@ Table.prototype.colorChanged = function(color, opacity, event) {
 };
 
 /**
- * 
+ * Adds the table parameters into the history and broadcasts.
+ * @param {string} table - ID of the table.
  */
 Table.prototype.addHistory = function(table) {
 	var h = $.extend({
@@ -158,7 +160,8 @@ Table.prototype.addHistory = function(table) {
 };
 
 /**
- * 
+ * Creates, resizes and removes the selection element. Calls the {@link Table#createControldots}.
+ * The selection attribute of the @constructor is required.
  */
 Table.prototype.setSelection = function() {
 	if (this.selected) {
@@ -176,7 +179,8 @@ Table.prototype.setSelection = function() {
 };
 
 /**
- * 
+ * Creates some dots to resize and move the table.
+ * @param {Object} $e - The element of the table.
  */
 Table.prototype.createControldots = function($e) {
 	this.$tables.find(".controldot").remove();
@@ -245,7 +249,18 @@ Table.prototype.createControldots = function($e) {
 }
 
 /**
- * 
+ * Draws the table. If the table already exist, the table will be modified or removed
+ * and newly created with the new parameters. The table will be added into the
+ * tables Object of the @constructor.
+ * @param {string} id - The ID for this table.
+ * @param {int} left
+ * @param {int} top
+ * @param {int} width
+ * @param {int} height
+ * @param {int} columns - Number of columns for this table.
+ * @param {int} rows - Number of rows for this table.
+ * @param {string} color
+ * @param {int} opacity
  */
 Table.prototype.draw = function(id, left, top, width, height, columns, rows, color, opacity) {
 	if (this.tables[id]) {
@@ -317,7 +332,7 @@ Table.prototype.draw = function(id, left, top, width, height, columns, rows, col
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Table.prototype.broadcast = function(userId, parameters) {
 	this.draw(parameters.id,
@@ -327,7 +342,7 @@ Table.prototype.broadcast = function(userId, parameters) {
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Table.prototype.removeTmp = function(history) {
 	var id = history.id;
@@ -338,7 +353,7 @@ Table.prototype.removeTmp = function(history) {
 };
 
 /**
- * 
+ * @see {@link Board#prepareRedraw}
  */
 Table.prototype.prepareRedraw = function() {
 	this.tables = {};
@@ -349,7 +364,7 @@ Table.prototype.prepareRedraw = function() {
 };
 
 /**
- * 
+ * @see {@link Board#redraw}
  */
 Table.prototype.redraw = function(parameters, board) {
 	if (board && board.temporary) return;

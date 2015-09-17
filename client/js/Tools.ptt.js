@@ -1,5 +1,5 @@
 /**
- * 
+ * An object which contains integer to all possible tool setting types.
  */
 var ToolSettingType = {
 	BUTTONS: 1,
@@ -9,7 +9,9 @@ var ToolSettingType = {
 };
 
 /**
- * Tools...
+ * This prototype manages the toolbar. It contains the width of the toolbar,
+ * the color, the opacity, the selected tool, calls events on changes and parses
+ * tool settings.
  * @constructor
  */
 function Tools() {
@@ -21,7 +23,7 @@ function Tools() {
 };
 
 /**
- * 
+ * Creates the toolbar.
  */
 Tools.prototype.init = function() {
 	this.$toolbar = $(".toolbar");
@@ -39,7 +41,7 @@ Tools.prototype.init = function() {
 };
 
 /**
- * 
+ * Creates the colors.
  */
 Tools.prototype.initColors = function() {
 	var self = this, colorId;
@@ -92,7 +94,8 @@ Tools.prototype.initColors = function() {
 };
 
 /**
- * 
+ * Creates a tool button with a click event in the toolbar.
+ * @see {@link Main#registerTool}
  */
 Tools.prototype.registerTool = function(toolNr) {
 	debug.log("registering");
@@ -116,7 +119,8 @@ Tools.prototype.registerTool = function(toolNr) {
 };
 
 /**
- * 
+ * Method to get the current selected color.
+ * @param {string} [color={current color}] - Parses the given color code instead of the current color.
  */
 Tools.prototype.getColor = function(color) {
 	if (color === undefined) return this.color;
@@ -125,7 +129,8 @@ Tools.prototype.getColor = function(color) {
 };
 
 /**
- * 
+ * Selects a color from the toolbar.
+ * @param {string} color - The color code or id.
  */
 Tools.prototype.selectColor = function(color) {
 	var colorId = -1;
@@ -156,7 +161,7 @@ Tools.prototype.selectColor = function(color) {
 };
 
 /**
- * 
+ * Calls the colorChanged event from the selected tool, if it exist.
  */
 Tools.prototype.callColorEvents = function() {
 	// call events
@@ -164,7 +169,7 @@ Tools.prototype.callColorEvents = function() {
 };
 
 /**
- * 
+ * Calls the settingsChanged event from the selected tool, if it exist.
  */
 Tools.prototype.callSettingsEvents = function() {
 	// call events
@@ -172,7 +177,10 @@ Tools.prototype.callSettingsEvents = function() {
 };
 
 /**
- * 
+ * Selects a tool from the sidebar. Calls the deinitEvents method of the old tool
+ * to remove some marks from the tools, removes the .tool events of the board, calls
+ * the initEvents of the new tool and sets the settings in the sidebar.
+ * @param {int} toolNr - The tool identifier.
  */
 Tools.prototype.selectTool = function(toolNr) {
 	this.$tools.find(".selected").removeClass("selected");
@@ -196,7 +204,10 @@ Tools.prototype.selectTool = function(toolNr) {
 };
 
 /**
- * 
+ * Parses the settings of a tool. Creates some buttons, ranges and more into the
+ * toolbar.
+ * @param {Object} toolObject - The object of a tool.
+ * @param {Object} settings - The settings of the tool.
  */
 Tools.prototype.parseSettings = function(toolObject, settings) {
 	this.$settings.html("");

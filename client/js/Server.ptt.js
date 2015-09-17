@@ -1,12 +1,20 @@
 /**
- * Enum
+ * Contains all types of sendable and receivable broadcasts. The index is the
+ * number of broadcasts and has to be incremented after each extension.
+ * The broadcast types are constants (shouldn't be edited ever) and have to be
+ * written in upper case.
+ * @example
+ * BroadcastType.NAME = BroadcastType.index++;
+ * var type = BroadcastType.NAME;
  */
 var BroadcastType = {
 	index: 0
 };
 
 /**
- * Tools...
+ * The Server prototype creates a connection to the server with the correct url
+ * to join the right channel. The server contains the userId, an object of
+ * all broadcast events and arrays of all connect and disconnect events.
  * @constructor
  */
 function Server(pathname) {
@@ -19,7 +27,7 @@ function Server(pathname) {
 	
 	this.userId = 0;
 	
-	this.alerts = 0;
+	this.alerts = false;
 	
 	// difference between client and server time
 	this.diff = 0;
@@ -30,11 +38,12 @@ function Server(pathname) {
 };
 
 /**
- * 
+ * Initializes all required server events.
+ * @param {boolean} [alerts=true] - Should the user get an alert on errors?
  */
 Server.prototype.init = function(alerts) {
 	var self = this;
-	if (typeof alerts === "undefined" || alert) this.alerts = 1;
+	if (typeof alerts === "undefined" || alert) this.alerts = true;
 	
 	// userId
 	this.socket.on("userId", function(resp) {
@@ -50,7 +59,9 @@ Server.prototype.init = function(alerts) {
 	this.socket.on("err", function(resp) {
 		switch (resp) {
 			case 1:
-				if (self.alerts) alert("You tried to connect to a board that doesn't exist (anymore).");
+				var msg = "You tried to connect to a board that doesn't exist (anymore).";
+				if (self.alerts) alert(msg);
+				else console.log(msg);
 				break;
 		}
 	});
@@ -89,7 +100,9 @@ Server.prototype.init = function(alerts) {
 };
 
 /**
- * 
+ * Broadcasts to all foreign clients in the same channel.
+ * @param {int} type - The broadcast type.
+ * @param {mixed} data - The data to send to the other clients.
  */
 Server.prototype.broadcast = function(type, data) {
 	this.socket.emit("*", {
@@ -100,7 +113,7 @@ Server.prototype.broadcast = function(type, data) {
 };
 
 /**
- * 
+ * Calculates the server time by the client time and the calculated difference.
  */
 Server.prototype.getTime = function() {
 	return new Date(new Date().getTime() + this.diff).getTime();

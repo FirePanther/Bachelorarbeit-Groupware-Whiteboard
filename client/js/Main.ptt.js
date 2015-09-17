@@ -1,17 +1,9 @@
 /**
- * The Main class
+ * The Main class contains objects of the required prototypes.
  * @constructor
  */
 function Main() {
 	debug.log("+ Main constructor");
-	
-	// window resize event listener
-	/*var $window = $(window);
-	$window.resize((function(self) {
-		return function() {
-			if (self.initialized) self.board.resize();
-		};
-	})(this)); */
 	
 	this.miscs = {};
 	this.server = new Server();
@@ -26,6 +18,10 @@ function Main() {
 	debug.log("- Main constructor");
 }
 
+/**
+ * Initializes the history, server, tools, board and registers the tools in the
+ * todo list.
+ */
 Main.prototype.init = function() {
 	debug.log("+ Main init");
 	
@@ -54,6 +50,9 @@ Main.prototype.init = function() {
 };
 
 /**
+ * Registers a toolObject. If the main object isn't initializes (page is not loaded)
+ * the registering progress will be added into the todo list.
+ * @param {Object} toolObject
  */
 Main.prototype.registerTool = function(toolObject) {
 	if (this.initialized) {

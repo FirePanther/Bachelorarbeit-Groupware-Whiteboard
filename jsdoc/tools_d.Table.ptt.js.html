@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: tools/d.Table.ptt.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: tools/d.Table.ptt.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * The Table prototype allows creating tables with columns and rows.
+ * @constructor
+ */
+function Table() {
+	this.toolSettings = {
+		table: {
+			icon: '&lt;table class="toolTableIcon">&lt;tr>&lt;td>&lt;/td>&lt;td>&lt;/td>&lt;td>&lt;/td>&lt;/tr>&lt;tr>&lt;td>&lt;/td>&lt;td>&lt;/td>&lt;td>&lt;/td>&lt;/tr>&lt;/table>'
+		}
+	};
+	
+	this.$tables = $('&lt;div class="click-through tableElements" />').css({
+		position: "absolute",
+		left: main.tools.toolbarWidth,
+		width: BOARDMAXWIDTH,
+		height: BOARDMAXHEIGHT,
+		zIndex: 1
+	});
+	$("body").append(this.$tables);
+	
+	this.selection = null;
+	this.selected = false;
+	this.clicked = false;
+	this.moved = false;
+	this.click = {};
+	this.tables = {};
+};
+
+/**
+ * @see {@link Tools#selectTool}
+ */
+Table.prototype.initEvents = function(toolNr) {
+	$("body").addClass("toolTable");
+	
+	this.$tables.removeClass("click-through");
+	var self = this;
+	this.$tables.on("mousedown.tool", function(event) {
+		self.clicked = true;
+		self.moved = false;
+		self.click.x = event.offsetX;
+		self.click.y = event.offsetY;
+		self.click.time = main.server.getTime();
+		if (self.selected) {
+			var $e = self.tables[self.selected].$element,
+				offset = $e.position(),
+				size = [ $e.width(), $e.height() ];
+			if (self.click.x &lt; offset.left || self.click.y &lt; offset.top
+				|| self.click.x > offset.left + size[0] || self.click.y > offset.top + size[1]) {
+				self.selected = false; // clicked outside
+				self.setSelection.apply(self);
+			}
+		}
+		self.$tables.find(".toolTableElement").removeClass("click-through");
+	}).on("mousemove.tool", function(event) {
+		if (!self.clicked) return;
+		self.$tables.find(".toolTableElement:not(.click-through)").addClass("click-through");
+		if (self.selected) {
+			// edit mode
+			var tmpBoard = main.board.tmpBoard(self.click.time);
+			tmpBoard.clear();
+			if (self.moved) {
+				tmpBoard.context.beginPath();
+				tmpBoard.context.moveTo(self.click.x * MULTIPLIER, self.click.y * MULTIPLIER);
+				if (Math.abs(event.offsetX - self.click.x) > Math.abs(event.offsetY - self.click.y)) {
+					// horizontal
+					tmpBoard.context.lineTo(event.offsetX * MULTIPLIER, self.click.y * MULTIPLIER);
+				} else {
+					// vertical
+					tmpBoard.context.lineTo(self.click.x * MULTIPLIER, event.offsetY * MULTIPLIER);
+				}
+				tmpBoard.context.stroke();
+			}
+			self.moved = true;
+		} else {
+			// create/drag mode
+			var left = Math.min(event.offsetX, self.click.x),
+				top = Math.min(event.offsetY, self.click.y),
+				right = Math.max(event.offsetX, self.click.x),
+				bottom = Math.max(event.offsetY, self.click.y),
+				width = right - left,
+				height = bottom - top,
+				table = self.draw.apply(self, [ self.click.time + "_" + main.server.userId, left, top, width, height, 1, 1, main.tools.getColor(), main.tools.opacity ]);
+			main.server.broadcast(BroadcastType.TMP, {
+				toolNr: HistoryType.TABLE,
+				id: self.click.time + "_" + main.server.userId,
+				left: left,
+				top: top,
+				width: width,
+				height: height,
+				c: main.tools.getColor(),
+				o: main.tools.opacity
+			});
+		}
+	}).on("mouseup.tool", function(event) {
+		if (self.clicked) {
+			self.$tables.find(".toolTableElement:not(.click-through)").addClass("click-through");
+			if (self.selected &amp;&amp; self.moved) {
+					main.board.tmpBoard(self.click.time).clear();
+					var $e = self.tables[self.selected].$element;
+					if (Math.abs(event.offsetX - self.click.x) > Math.abs(event.offsetY - self.click.y)) {
+						// horizontal line, add row
+						self.tables[self.selected].rows++;
+						var $row = $("&lt;tr />");
+						for (var i = 0; i &lt; self.tables[self.selected].columns; i++) {
+							$row.append($("&lt;td />"));
+						}
+						$e.append($row);
+					} else {
+						// vertical line, add column
+						self.tables[self.selected].columns++;
+						$e.find("tr").append($("&lt;td />"));
+					}
+					self.addHistory(self.selected);
+			} else if (self.tables[self.click.time + "_" + main.server.userId]) {
+				self.selected = self.click.time + "_" + main.server.userId;
+				self.setSelection.apply(self);
+				self.addHistory(self.selected);
+			}
+			self.clicked = false;
+		}
+	});
+};
+
+/**
+ * @see {@link Tools#selectTool}
+ */
+Table.prototype.deinitEvents = function() {
+	$("body").removeClass("toolTable");
+	this.$tables.addClass("click-through");
+	this.selected = false;
+	this.setSelection();
+};
+
+/**
+ * @see {@link Tools#callColorEvents}
+ */
+Table.prototype.colorChanged = function(color, opacity, event) {
+	if (this.selected) {
+		this.tables[this.selected].$element.css({
+			borderColor: color,
+			opacity: opacity
+		});
+		this.tables[this.selected].c = color;
+		this.tables[this.selected].o = opacity;
+		this.addHistory(this.selected);
+	}
+};
+
+/**
+ * Adds the table parameters into the history and broadcasts.
+ * @param {string} table - ID of the table.
+ */
+Table.prototype.addHistory = function(table) {
+	var h = $.extend({
+		toolNr: HistoryType.TABLE,
+		id: table
+	}, this.tables[table]);
+	var history = main.history.add(h);
+	main.server.broadcast(BroadcastType.SAVE, history);
+};
+
+/**
+ * Creates, resizes and removes the selection element. Calls the {@link Table#createControldots}.
+ * The selection attribute of the @constructor is required.
+ */
+Table.prototype.setSelection = function() {
+	if (this.selected) {
+		if (this.selection) {
+			this.selection.resize();
+		} else {
+			this.selection = new Selection(this.tables[this.selected].$element);
+		}
+		this.createControldots(this.tables[this.selected].$element);
+	} else if (this.selection) {
+		this.selection.remove();
+		this.selection = null;
+		this.$tables.find(".controldot").remove();
+	}
+};
+
+/**
+ * Creates some dots to resize and move the table.
+ * @param {Object} $e - The element of the table.
+ */
+Table.prototype.createControldots = function($e) {
+	this.$tables.find(".controldot").remove();
+	var self = this,
+		selected = this.selected,
+		distance = 10,
+		dotHalf = 6 / 2,
+		offset = $e.position(),
+		size = [ $e.outerWidth(), $e.outerHeight() ],
+		mid = [ offset.left + size[0] / 2, offset.top + size[1] / 2 ],
+		full = [ offset.left + size[0], offset.top + size[1] ],
+		$dotRight = $('&lt;div class="controldot" data-size="width" data-coord="X" />').css({ left: full[0] - dotHalf + distance, top: mid[1] - dotHalf, cursor: "ew-resize" }),
+		$dotBottom = $('&lt;div class="controldot" data-size="height" data-coord="Y" />').css({ left: mid[0] - dotHalf, top: full[1] - dotHalf + distance, cursor: "ns-resize" }),
+		$dotDrag = $('&lt;div class="controldot" />').css({ left: offset.left - distance - dotHalf, top: offset.top - distance - dotHalf, cursor: "move" });
+	$dotRight.add($dotBottom).on("mousedown", function(event) {
+		event.stopPropagation();
+		var get = [ $(this).attr("data-size"), $(this).attr("data-coord") ],
+			click = event[ "page" + get[1] ],
+			size = $e[get[0]]();
+		$(window).on("mousemove.controldot", function(event) {
+			self.selected = false;
+			self.setSelection.apply(self);
+			var move = event[ "page" + get[1] ],
+				newSize = size + move - click;
+			if (newSize &lt; 15) newSize = 15;
+			$e[get[0]](newSize);
+			self.tables[selected][get[0]] = newSize;
+		}).on("mouseup.controldot", function(event) {
+			$(window).off(".controldot");
+			self.selected = selected;
+			self.setSelection.apply(self);
+			self.addHistory(selected);
+		});
+	});
+	$dotDrag.on("mousedown", function(event) {
+		event.stopPropagation();
+		var get = [ $(this).attr("data-size"), $(this).attr("data-coord") ],
+			clickX = event.pageX,
+			clickY = event.pageY,
+			pos = $e.position(),
+			w = $e.outerWidth(),
+			h = $e.outerHeight();
+		$(window).on("mousemove.controldot", function(event) {
+			self.selected = false;
+			self.setSelection.apply(self);
+			var moveX = event.pageX,
+				moveY = event.pageY,
+				l = pos.left + moveX - clickX,
+				t = pos.top + moveY - clickY;
+			if (l &lt; 0) l = 0; else if (l + w > BOARDMAXWIDTH) l = BOARDMAXWIDTH - w;
+			if (t &lt; 0) t = 0; else if (t + h > BOARDMAXHEIGHT) t = BOARDMAXHEIGHT - h;
+			$e.css("left", l);
+			$e.css("top", t);
+			self.tables[selected].left = l;
+			self.tables[selected].top = t;
+		}).on("mouseup.controldot", function(event) {
+			$(window).off(".controldot");
+			self.selected = selected;
+			self.setSelection.apply(self);
+			self.addHistory(selected);
+		});
+	});
+	this.$tables.append($dotRight);
+	this.$tables.append($dotBottom);
+	this.$tables.append($dotDrag);
+}
+
+/**
+ * Draws the table. If the table already exist, the table will be modified or removed
+ * and newly created with the new parameters. The table will be added into the
+ * tables Object of the @constructor.
+ * @param {string} id - The ID for this table.
+ * @param {int} left
+ * @param {int} top
+ * @param {int} width
+ * @param {int} height
+ * @param {int} columns - Number of columns for this table.
+ * @param {int} rows - Number of rows for this table.
+ * @param {string} color
+ * @param {int} opacity
+ */
+Table.prototype.draw = function(id, left, top, width, height, columns, rows, color, opacity) {
+	if (this.tables[id]) {
+		if (columns != this.tables[id].columns || rows != this.tables[id].rows) {
+			this.tables[id].$element.remove();
+			delete this.tables[id];
+			this.draw.apply(this, arguments);
+		} else {
+			if (width &lt; 15 || height &lt; 15) {
+				this.tables[id].$element.remove();
+				delete this.tables[id];
+			} else {
+				this.tables[id].width = width;
+				this.tables[id].height = height;
+				this.tables[id].c = color;
+				this.tables[id].o = opacity;
+				this.tables[id].$element.css({
+					left: left,
+					top: top,
+					width: width,
+					height: height,
+					borderColor: color,
+					opacity: opacity
+				});
+			}
+		}
+	} else {
+		if (width &lt; 15 || height &lt; 15) return false;
+		var self = this,
+			row = "",
+			html = "",
+			$table = $("&lt;table />").attr({
+				id: "table_" + id,
+				class: "toolTableElement click-through"
+			}).css({
+				left: left,
+				top: top,
+				width: width,
+				height: height,
+				borderColor: color,
+				opacity: opacity
+			}).on("mouseup", function(event) {
+				self.selected = id;
+				self.setSelection.apply(self);
+			});
+		row += "&lt;tr>";
+		for (var i = 0; i &lt; columns; i++) {
+			row += "&lt;td>&lt;/td>";
+		}
+		row += "&lt;/tr>";
+		for (var i = 0; i &lt; rows; i++) {
+			html += row;
+		}
+		$table.append(html);
+		
+		this.$tables.append($table);
+		this.tables[id] = {
+			$element: $table,
+			rows: 1,
+			columns: 1,
+			left: left,
+			top: top,
+			width: width,
+			height: height,
+			c: color,
+			o: opacity
+		};
+	}
+};
+
+/**
+ * @see {@link Board#initBroadcastTypes}
+ */
+Table.prototype.broadcast = function(userId, parameters) {
+	this.draw(parameters.id,
+		parameters.left, parameters.top, parameters.width, parameters.height,
+		1, 1,
+		parameters.c, parameters.o);
+};
+
+/**
+ * @see {@link Board#initBroadcastTypes}
+ */
+Table.prototype.removeTmp = function(history) {
+	var id = history.id;
+	if (this.tables[id]) {
+		this.tables[id].$element.remove();
+		delete this.tables[id];
+	}
+};
+
+/**
+ * @see {@link Board#prepareRedraw}
+ */
+Table.prototype.prepareRedraw = function() {
+	this.tables = {};
+	$(".toolTableElement").remove();
+	this.selected = false;
+	this.setSelection();
+
+};
+
+/**
+ * @see {@link Board#redraw}
+ */
+Table.prototype.redraw = function(parameters, board) {
+	if (board &amp;&amp; board.temporary) return;
+	this.draw(parameters.id,
+		parameters.left, parameters.top, parameters.width, parameters.height,
+		parameters.columns, parameters.rows,
+		parameters.c, parameters.o);
+};
+
+// register tool in main
+main.registerTool(new Table());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Chat.html">Chat</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Debug.html">Debug</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="Main.html">Main</a></li><li><a href="Selection.html">Selection</a></li><li><a href="Server.html">Server</a></li><li><a href="Shape.html">Shape</a></li><li><a href="Table.html">Table</a></li><li><a href="Text.html">Text</a></li><li><a href="Tools.html">Tools</a></li></ul><h3>Global</h3><ul><li><a href="global.html#BOARDMAXHEIGHT">BOARDMAXHEIGHT</a></li><li><a href="global.html#BOARDMAXWIDTH">BOARDMAXWIDTH</a></li><li><a href="global.html#BroadcastType">BroadcastType</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#HistoryType">HistoryType</a></li><li><a href="global.html#lcfirst">lcfirst</a></li><li><a href="global.html#main">main</a></li><li><a href="global.html#MULTIPLIER">MULTIPLIER</a></li><li><a href="global.html#ToolSettingType">ToolSettingType</a></li><li><a href="global.html#ucfirst">ucfirst</a></li><li><a href="global.html#UNDOSTEPS">UNDOSTEPS</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 17 2015 23:46:33 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

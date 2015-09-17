@@ -1,7 +1,6 @@
 /**
- * The Drawing Handler. Allows to draw on a board.
+ * The Drawing prototype allows to draw on a board.
  * @constructor
- * @param {jQuery} [$board] - The canvas jQuery element.
  */
 function Draw() {
 	this.drawing = 0;
@@ -65,7 +64,7 @@ function Draw() {
 };
 
 /**
- * Initializes the mouse events for the board.
+ * @see {@link Tools#selectTool}
  */
 Draw.prototype.initEvents = function(toolNr) {
 	this.toolNr = toolNr;
@@ -102,10 +101,9 @@ Draw.prototype.initEvents = function(toolNr) {
 };
 
 /**
- * Saves the whole "draw" action.
+ * Saves the whole drawing action, adds to the history and broadcasts.
  * @param {Object} event - The mouse event.
  * @param {boolean} [begin=false] - Is this the beginning of the drawing? (e.g. for mousedown and mouseenter)
- * @oaram {boolean} [doCorrectByDirection=false] - Should the event offset be corrected? (e.g. for mouseenter and mouseleave)
  * @param {integer} [setState=0] - The state of the mouse (see state@"Draw::addHistory" or state@"Draw::draw").
  */
 Draw.prototype.drawAction = function(event, begin, setState) {
@@ -123,7 +121,7 @@ Draw.prototype.drawAction = function(event, begin, setState) {
 	var thickness = this.toolNr == HistoryType.ERASER ? this.settings.eraserSize : this.settings.brushSize;
 	var drawing = this.draw(this.toolNr, thickness, position, setState);
 	
-	if (setState == 2 && drawing.drawed) {
+	if (setState == 2) {
 		// finished the current drawing
 		var history = main.history.add({
 			toolNr: this.toolNr,
@@ -161,14 +159,19 @@ Draw.prototype.addHistory = function(position, state) {
 
 /**
  * Draws the "current" drawing line for line.
+ * @param {int} toolNr - The tool identifier.
+ * @param {int} thickness - The thickness of the tool.
  * @param {Object} position - The current position of the mouse.
  * @param {number} position.0 - The x position of the mouse.
- * @param {number} position.1 - The x position of the mouse.
+ * @param {number} position.1 - The y position of the mouse.
  * @param {integer} state - The state of the mouse.
  * @param {integer} state.0 - mouse is down
  * @param {integer} state.1 - mouse was moved
  * @param {integer} state.2 - mouse is up
- * @param ...
+ * @param {string} color
+ * @param {int} opacity
+ * @param {string} userId - The user who drawed this, userId -1 means "redraw".
+ * @param {Object} board - The board object where to draw.
  */
 Draw.prototype.draw = function(toolNr, thickness, position, state, color, opacity, userId, board) {
 	userId = userId || 0; // 0 = own, -1 = not important (e.g. redraw)
@@ -192,7 +195,7 @@ Draw.prototype.draw = function(toolNr, thickness, position, state, color, opacit
 			break;
 		// mouse up
 		case 2:
-			if (!this.drawEnd(userId == -1, curBoard, position, opacity)) return { drawed: false };
+			this.drawEnd(userId == -1, curBoard, position, opacity);
 			break;
 	}
 	
@@ -209,12 +212,21 @@ Draw.prototype.draw = function(toolNr, thickness, position, state, color, opacit
 		});
 	}
 	return {
-		drawed: true,
 		board: curBoard
 	};
 };
 
 /**
+ * Starts the drawing. Sets some options and initializes some variables.
+ * @param {boolean} redraw - If this is a redraw.
+ * @param {int} toolNr - The tool identifier.
+ * @param {Object} curBoard - The board object where to draw.
+ * @param {int} thickness - The thickness of the tool.
+ * @param {Object} position - The current position of the mouse.
+ * @param {number} position.0 - The x position of the mouse.
+ * @param {number} position.1 - The y position of the mouse.
+ * @param {string} color
+ * @param {int} opacity
  */
 Draw.prototype.drawStart = function(redraw, toolNr, curBoard, thickness, position, color, opacity) {
 	switch (toolNr) {
@@ -242,6 +254,12 @@ Draw.prototype.drawStart = function(redraw, toolNr, curBoard, thickness, positio
 };
 
 /**
+ * Continues the drawing. Draws the lines.
+ * @param {boolean} redraw - If this is a redraw.
+ * @param {Object} curBoard - The board object where to draw.
+ * @param {Object} position - The current position of the mouse.
+ * @param {number} position.0 - The x position of the mouse.
+ * @param {number} position.1 - The y position of the mouse.
  */
 Draw.prototype.drawContinue = function(redraw, curBoard, position) {
 	if (curBoard.cache.startPosition) {
@@ -255,37 +273,39 @@ Draw.prototype.drawContinue = function(redraw, curBoard, position) {
 };
 
 /**
- *
+ * Finishes the drawing. If there is no drawing (just a click without mouse move),
+ * there will be added a dot.
+ * @param {boolean} redraw - If this is a redraw.
+ * @param {Object} curBoard - The board object where to draw.
+ * @param {Object} position - The current position of the mouse.
+ * @param {number} position.0 - The x position of the mouse.
+ * @param {number} position.1 - The y position of the mouse.
  */
-Draw.prototype.drawEnd = function(redraw, curBoard, position, opacity) {
+Draw.prototype.drawEnd = function(redraw, curBoard, position) {
 	if (curBoard.cache.startPosition) {
 		curBoard.context.beginPath();
 		curBoard.context.moveTo(position[0] * MULTIPLIER + .001, position[1] * MULTIPLIER);
 	}
 	curBoard.context.lineTo(position[0] * MULTIPLIER, position[1] * MULTIPLIER);
 	curBoard.context.stroke();
-	
-	return true;
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Draw.prototype.broadcast = function(userId, parameters) {
 	this.draw(parameters.toolNr, parameters.t, [ parameters.x, parameters.y ], parameters.s, parameters.c, parameters.o, userId);
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Draw.prototype.removeTmp = function(history) {
 	main.board.tmpBoard(history.userId).remove();
 };
 
 /**
- * Draws the whole "current" drawing (from mousedown to mouseup), called by the
- * board class.
- * @param {Object} history - Contains the whole "current" drawing.
+ * @see {@link Board#redraw}
  */
 Draw.prototype.redraw = function(history, board) {
 	board = board || main.board;

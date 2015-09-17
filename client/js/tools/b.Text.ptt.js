@@ -1,5 +1,6 @@
 /**
  * The Text prototype is a widget to create text elements.
+ * @constructor
  */
 function Text() {
 	this.settings = {
@@ -60,8 +61,7 @@ function Text() {
 };
 
 /**
- * This method will be called automatically.
- * @see {@link Tools.selectTool}
+ * @see {@link Tools#selectTool}
  */
 Text.prototype.initEvents = function(toolName) {
 	$("body").addClass("toolText");
@@ -122,7 +122,7 @@ Text.prototype.initEvents = function(toolName) {
 };
 
 /**
- * 
+ * @see {@link Tools#selectTool}
  */
 Text.prototype.deinitEvents = function() {
 	$("body").removeClass("toolText");
@@ -130,7 +130,7 @@ Text.prototype.deinitEvents = function() {
 };
 
 /**
- * 
+ * @see {@link Tools#callColorEvents}
  */
 Text.prototype.colorChanged = function(color, opacity) {
 	var $textfield = $(".toolTextfield.focus");
@@ -144,7 +144,7 @@ Text.prototype.colorChanged = function(color, opacity) {
 };
 
 /**
- * 
+ * @see {@link Tools#callSettingsEvents}
  */
 Text.prototype.settingsChanged = function() {
 	var $textfield = $(".toolTextfield.focus");
@@ -154,7 +154,7 @@ Text.prototype.settingsChanged = function() {
 			fontFamily: this.settings.fontFamily
 		});
 		this.selection.resize();
-		this.setInputSize({ t: $textfield }, 0);
+		this.setInputSize({ t: $textfield });
 		this.addHistory($textfield.attr("id"), {
 			fsize: this.settings.fontSize,
 			family: this.settings.fontFamily
@@ -163,7 +163,22 @@ Text.prototype.settingsChanged = function() {
 };
 
 /**
- * 
+ * Creates a new textfield containing a textarea and a label. The parameters will be set to the textfield.
+ * If this is not a redraw this method broadcasts the textfield with its parameters.
+ * The textfield will be added into the textfields Object created in the constructor.
+ * @param {string} [userId=0] - The user who created this textfield.
+ * @param {string} [id=text_{userId}_{serverTime}] - The id for this textfield.
+ * @param {boolean} [focus=false] - If the textfield should get the focus.
+ * @param {string} [val=""] - The value for this textfield.
+ * @param {int} [left={min:click.x1,click.x2}] - The left coordinate.
+ * @param {int} [top={min:click.y1,click.y2}]] - The top coordinate.
+ * @param {int} [width={max(click.x1,click.x2)-left}]] - The width for this textfield.
+ * @param {int} [height={max(click.y1,click.y2)-top}]] - The height for this textfield.
+ * @param {string} [color={selected color}] - The color for the textarea and label.
+ * @param {float} [opacity={selected opacity}] - The opacity for the textarea and label.
+ * @param {int} [fsize={setting font size}] - The font size for the textarea and label.
+ * @param {string} [family={setting font family}] - The font family for the textarea and label.
+ * @param {boolean} [redraw=false] - If this is a redraw.
  */
 Text.prototype.createTextfield = function(userId, id, focus, val, left, top, width, height, color, opacity, fsize, family, redraw) {
 	userId = userId || main.server.userId;
@@ -275,7 +290,13 @@ Text.prototype.createTextfield = function(userId, id, focus, val, left, top, wid
 };
 
 /**
- * 
+ * Appends the textfield to the texts container (DOM).
+ * @param {Object} options - Some options for appending.
+ * @param {boolean} [textselector=false] - Creates textselector elements (dashed border).
+ * @param {boolean} [parent=false] - Creates the parent container (contains the textarea).
+ * @param {boolean} [input=false] - Creates the textarea element (requires parent=true).
+ * @param {boolean} [label=false] - Creates the label element.
+ * @param {boolean} [add=false] - Adds the textfield to the texts container.
  */
 Text.prototype.appendTextfieldDom = function($textfield, options) {
 	if (options.textselector) {
@@ -293,7 +314,10 @@ Text.prototype.appendTextfieldDom = function($textfield, options) {
 };
 
 /**
- * 
+ * Starts the dragging of a textfield element. Adds mousemove and mouseup events to the window,
+ * to move the element and stop the dragging.
+ * @param {Object} elements - An elements container containing all elements of the textfield.
+ * @param {Object} event - The mouse event.
  */
 Text.prototype.startDrag = function(elements, event) {
 	var self = this,
@@ -353,7 +377,10 @@ Text.prototype.startDrag = function(elements, event) {
 };
 
 /**
- * 
+ * Sets the size of the textfield to the size of the text (label), broadcasts and
+ * resizes the selection element.
+ * @param {Object} elements - An elements container containing all elements of the textfield.
+ * @param {string} eventType - The type of key event.
  */
 Text.prototype.inputKey = function(elements, eventType) {
 	if (eventType == "paste" || eventType == "keydown") {
@@ -401,7 +428,9 @@ Text.prototype.inputKey = function(elements, eventType) {
 };
 
 /**
- * 
+ * Determines the size of the text.
+ * @param {Object} elements - An elements container containing all or some elements of the textfield.
+ * @param {int} [addW=20] - Adds some width to the textarea to prevent word breaks while typing.
  */
 Text.prototype.setInputSize = function(elements, addW) {
 	addW = addW === undefined ? 20 : addW;
@@ -435,7 +464,10 @@ Text.prototype.setInputSize = function(elements, addW) {
 };
 
 /**
- * 
+ * Sets the input to the textarea, sets the selection element and broadcasts.
+ * Adds some events to the toolbar to prevent blur on changing some settings or
+ * the color.
+ * @param {Object} elements - An elements container containing all elements of the textfield.
  */
 Text.prototype.inputFocus = function(elements) {
 	var $input = elements.i,
@@ -472,9 +504,11 @@ Text.prototype.inputFocus = function(elements) {
 };
 
 /**
- * 
+ * Removes the selection element and broadcasts. Removes the textfield if not
+ * created fixed and has no value.
+ * @param {Object} elements - An elements container containing all elements of the textfield.
  */
-Text.prototype.inputBlur = function(elements, events) {
+Text.prototype.inputBlur = function(elements) {
 	var $input = elements.i,
 		$parent = elements.p,
 		$textfield = elements.t,
@@ -533,7 +567,9 @@ Text.prototype.inputBlur = function(elements, events) {
 };
 
 /**
- * 
+ * Sets some received parameters.
+ * @param {Object} elements - An elements container containing all or some elements of the textfield.
+ * @param {Object} parameters - @see {@link Text#createTextfield}
  */
 Text.prototype.setParameters = function(elements, parameters) {
 	var $textfield = elements.t,
@@ -577,7 +613,12 @@ Text.prototype.setParameters = function(elements, parameters) {
 };
 
 /**
- * 
+ * Sets the color and opacity of the textfield.
+ * @param {Object} $textfield
+ * @param {string} color
+ * @param {ing} opacity
+ * @param {boolean} [history=false] - If the color change should call {@link Text#addHistory}
+ 
  */
 Text.prototype.setColor = function($textfield, color, opacity, history) {
 	color = main.tools.getColor(color);
@@ -591,7 +632,9 @@ Text.prototype.setColor = function($textfield, color, opacity, history) {
 };
 
 /**
- * 
+ * Sets some parameters, adds it into the history and broadcasts.
+ * @param {string} id - ID of the textfield.
+ * @param {Object} set - The new values of the parameters.
  */
 Text.prototype.addHistory = function(id, set) {
 	$.extend(this.textfields[id], set);
@@ -604,7 +647,8 @@ Text.prototype.addHistory = function(id, set) {
 };
 
 /**
- * 
+ * Parses the text parameters. Removes, sets the parameters or creates the textfield.
+ * @param {Object} parameters - All parameters for the textfield.
  */
 Text.prototype.drawText = function(parameters) {
 	var $textfield = $("#" + parameters.id);
@@ -636,14 +680,14 @@ Text.prototype.drawText = function(parameters) {
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Text.prototype.broadcast = function(userId, parameters) {
 	this.drawText(parameters);
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Text.prototype.removeTmp = function(history) {
 	this.drawText($({}, history, {
@@ -653,7 +697,7 @@ Text.prototype.removeTmp = function(history) {
 };
 
 /**
- * 
+ * @see {@link Board#prepareRedraw}
  */
 Text.prototype.prepareRedraw = function() {
 	var self = this;
@@ -666,7 +710,7 @@ Text.prototype.prepareRedraw = function() {
 };
 
 /**
- * 
+ * @see {@link Board#redraw}
  */
 Text.prototype.redraw = function(parameters, board) {
 	if (board && board.temporary) {

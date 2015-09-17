@@ -1,1 +1,1 @@
-jsdoc -d jsdoc -r client
+node_modules/.bin/jsdoc -d jsdoc -c conf.json -r client

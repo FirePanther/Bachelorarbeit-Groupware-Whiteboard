@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Clock</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: Clock</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Clock
+        </h2>
+        
+            <div class="class-description">Clock stores callbacks and executes them when it is told to simulate the advancing of time</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="Clock"><span class="type-signature"></span>new Clock<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".nowMillis"><span class="type-signature">(static) </span>nowMillis<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    The current milliseconds
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".scheduledFunctions"><span class="type-signature">(static) </span>scheduledFunctions<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Hash of milliseconds to scheduled functions
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id=".timeoutsMade"><span class="type-signature">(static) </span>timeoutsMade<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    The number of timeouts executed
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line19">line 19</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".reset"><span class="type-signature">(static) </span>reset<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Resets the clock - clears the scheduledFunctions, the current milliseconds, and the timeouts made count
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".scheduleFunction"><span class="type-signature">(static) </span>scheduleFunction<span class="signature">(timeoutKey, funcToCall, millis, recurring)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Schedules a function to be executed at the given number of milliseconds from now
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>timeoutKey</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the ID of the callback</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>funcToCall</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the function to call</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>millis</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the number of milliseconds before the callback</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>recurring</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">whether the callback recurs - if true, then the callback will be re-registered after it executes</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line95">line 95</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".tick"><span class="type-signature">(static) </span>tick<span class="signature">(millis)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Simulate the advancing of time.  Any functions scheduled in the given interval will be executed
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>millis</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the number of milliseconds by which to advance time</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html">tests/jsunit/lib/jsUnitMockTimeout.js</a>, <a href="tests_jsunit_lib_jsUnitMockTimeout.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Board.html">Board</a></li><li><a href="Clock.html">Clock</a></li><li><a href="Contains%2520utility%2520functions%2520for%2520the%2520JsUnit%2520framework.html">Contains utility functions for the JsUnit framework</a></li><li><a href="Debug.html">Debug</a></li><li><a href="Draw.html">Draw</a></li><li><a href="History.html">History</a></li><li><a href="JsUnit.AssertionArgumentError.html">AssertionArgumentError</a></li><li><a href="JsUnit.Error.html">Error</a></li><li><a href="JsUnit.Failure.html">Failure</a></li><li><a href="JsUnitTestSuite.html">JsUnitTestSuite</a></li><li><a href="Main.html">Main</a></li><li><a href="MockXmlHttpRequest.html">MockXmlHttpRequest</a></li><li><a href="Server.html">Server</a></li><li><a href="Tools.html">Tools</a></li></ul><h3>Global</h3><ul><li><a href="global.html#assert">assert</a></li><li><a href="global.html#assertArrayEquals">assertArrayEquals</a></li><li><a href="global.html#assertArrayEqualsIgnoringOrder">assertArrayEqualsIgnoringOrder</a></li><li><a href="global.html#assertContains">assertContains</a></li><li><a href="global.html#assertEquals">assertEquals</a></li><li><a href="global.html#assertEqualsIgnoringOrder">assertEqualsIgnoringOrder</a></li><li><a href="global.html#assertEvaluatesToFalse">assertEvaluatesToFalse</a></li><li><a href="global.html#assertEvaluatesToTrue">assertEvaluatesToTrue</a></li><li><a href="global.html#assertFalse">assertFalse</a></li><li><a href="global.html#assertHashEquals">assertHashEquals</a></li><li><a href="global.html#assertHTMLEquals">assertHTMLEquals</a></li><li><a href="global.html#assertNaN">assertNaN</a></li><li><a href="global.html#assertNotEquals">assertNotEquals</a></li><li><a href="global.html#assertNotNaN">assertNotNaN</a></li><li><a href="global.html#assertNotNull">assertNotNull</a></li><li><a href="global.html#assertNotUndefined">assertNotUndefined</a></li><li><a href="global.html#assertNull">assertNull</a></li><li><a href="global.html#assertObjectEquals">assertObjectEquals</a></li><li><a href="global.html#assertRoughlyEquals">assertRoughlyEquals</a></li><li><a href="global.html#assertTrue">assertTrue</a></li><li><a href="global.html#assertUndefined">assertUndefined</a></li><li><a href="global.html#BroadcastType">BroadcastType</a></li><li><a href="global.html#Chat">Chat</a></li><li><a href="global.html#clearInterval">clearInterval</a></li><li><a href="global.html#clearTimeout">clearTimeout</a></li><li><a href="global.html#createXmlHttpRequest">createXmlHttpRequest</a></li><li><a href="global.html#Cursor">Cursor</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#fail">fail</a></li><li><a href="global.html#hash">hash</a></li><li><a href="global.html#HistoryType">HistoryType</a></li><li><a href="global.html#isTestPageLoaded">isTestPageLoaded</a></li><li><a href="global.html#JSUNIT_UNDEFINED_VALUE">JSUNIT_UNDEFINED_VALUE</a></li><li><a href="global.html#JsUnitError">JsUnitError</a></li><li><a href="global.html#JsUnitFailure">JsUnitFailure</a></li><li><a href="global.html#Selection">Selection</a></li><li><a href="global.html#setInterval">setInterval</a></li><li><a href="global.html#setTimeout">setTimeout</a></li><li><a href="global.html#Shape">Shape</a></li><li><a href="global.html#Table">Table</a></li><li><a href="global.html#Text">Text</a></li><li><a href="global.html#ToolSettingType">ToolSettingType</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a> on Thu Sep 17 2015 21:50:02 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

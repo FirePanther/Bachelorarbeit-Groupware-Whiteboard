@@ -1,5 +1,6 @@
 /**
- * 
+ * Creates a cursor element which represents the cursor of a foreign client.
+ * @constructor
  */
 function Cursor() {
 	this.$cursors = $('<div class="cursors" />');
@@ -32,7 +33,10 @@ function Cursor() {
 };
 
 /**
- * 
+ * Moves the cursor to the new coordinates. Corrects the label (if the user has renamed hisself).
+ * @param {string} cursorId - The userId.
+ * @param {int} x
+ * @param {int} y
  */
 Cursor.prototype.move = function(cursorId, x, y) {
 	if (this.cursors[cursorId]) {
@@ -75,7 +79,8 @@ Cursor.prototype.move = function(cursorId, x, y) {
 };
 
 /**
- * 
+ * Removes the cursor.
+ * @param {string} cursorId - The userId.
  */
 Cursor.prototype.remove = function(cursorId) {
 	if (this.cursors[cursorId]) {
@@ -85,7 +90,8 @@ Cursor.prototype.remove = function(cursorId) {
 };
 
 /**
- * 
+ * Broadcasts the own cursor positions.
+ * @param {Object} event - The mouse events.
  */
 Cursor.prototype.broadcastMove = function(event) {
 	if (this.focus) {
@@ -99,7 +105,8 @@ Cursor.prototype.broadcastMove = function(event) {
 };
 
 /**
- * 
+ * Broadcasts, that the own client is away.
+ * @param {Object} event - The mouse events.
  */
 Cursor.prototype.broadcastAway = function(event) {
 	main.server.broadcast(BroadcastType.CURSOR, {

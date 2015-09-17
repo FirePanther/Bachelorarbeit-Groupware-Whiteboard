@@ -1,5 +1,6 @@
 /**
- *
+ * The Shape prototype creates tools to draw shapes on the board.
+ * @constructor
  */
 function Shape() {
 	this.settings = {
@@ -59,7 +60,7 @@ function Shape() {
 };
 
 /**
- * 
+ * @see {@link Tools#selectTool}
  */
 Shape.prototype.initEvents = function(toolNr) {
 	$("body").addClass("toolShape");
@@ -125,14 +126,24 @@ Shape.prototype.initEvents = function(toolNr) {
 };
 
 /**
- * 
+ * @see {@link Tools#selectTool}
  */
 Shape.prototype.deinitEvents = function() {
 	$("body").removeClass("toolShape");
 };
 
 /**
- * 
+ * Draws a shape on a board.
+ * @param {Object} board - The board where to draw.
+ * @param {int} toolNr - The tool identifier (for different shapes).
+ * @param {int} x - The x coordinate.
+ * @param {int} y - The y coordinate.
+ * @param {int} width
+ * @param {int} height
+ * @param {string} color
+ * @param {opacity} opacity
+ * @param {Object} settings - Some settings for the shape.
+ * @param {int} broadcastType - If it should be broadcasted and with which type.
  */
 Shape.prototype.drawForm = function(board, toolNr, x, y, w, h, color, opacity, settings, broadcastType) {
 	var ctx = board.context,
@@ -242,7 +253,7 @@ Shape.prototype.drawForm = function(board, toolNr, x, y, w, h, color, opacity, s
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Shape.prototype.broadcast = function(userId, parameters) {
 	var tmpBoard = main.board.tmpBoard(userId);
@@ -253,14 +264,14 @@ Shape.prototype.broadcast = function(userId, parameters) {
 };
 
 /**
- * 
+ * @see {@link Board#initBroadcastTypes}
  */
 Shape.prototype.removeTmp = function(history) {
 	main.board.tmpBoard(history.userId).remove();
 };
 
 /**
- * 
+ * @see {@link Board#redraw}
  */
 Shape.prototype.redraw = function(history, board) {
 	board = board || main.board;

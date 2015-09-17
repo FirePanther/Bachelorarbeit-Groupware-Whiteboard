@@ -1,0 +1,62 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '-g',
+1 verbose cli   'git://github.com/jsdoc3/jsdoc.git' ]
+2 info using npm@2.10.1
+3 info using node@v0.12.4
+4 verbose install initial load of /usr/local/lib/package.json
+5 verbose readDependencies loading dependencies from /usr/local/lib/package.json
+6 silly cache add args [ 'git://github.com/jsdoc3/jsdoc.git', null ]
+7 verbose cache add spec git://github.com/jsdoc3/jsdoc.git
+8 silly cache add parsed spec { raw: 'git://github.com/jsdoc3/jsdoc.git',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: 'git://github.com/jsdoc3/jsdoc.git',
+8 silly cache add   spec: 'git://github.com/jsdoc3/jsdoc.git',
+8 silly cache add   type: 'hosted',
+8 silly cache add   hosted:
+8 silly cache add    { type: 'github',
+8 silly cache add      ssh: 'git@github.com:jsdoc3/jsdoc.git',
+8 silly cache add      sshUrl: 'git+ssh://git@github.com/jsdoc3/jsdoc.git',
+8 silly cache add      httpsUrl: 'git+https://github.com/jsdoc3/jsdoc.git',
+8 silly cache add      gitUrl: 'git://github.com/jsdoc3/jsdoc.git',
+8 silly cache add      shortcut: 'github:jsdoc3/jsdoc',
+8 silly cache add      directUrl: 'https://raw.githubusercontent.com/jsdoc3/jsdoc/master/package.json' } }
+9 verbose addRemoteGit caching git://github.com/jsdoc3/jsdoc.git
+10 verbose addRemoteGit git://github.com/jsdoc3/jsdoc.git is a repository hosted by github
+11 silly tryClone cloning git://github.com/jsdoc3/jsdoc.git via git://github.com/jsdoc3/jsdoc.git
+12 verbose tryClone git-github-com-jsdoc3-jsdoc-git-0dba5517 not in flight; caching
+13 info git [ 'clone',
+13 info git   '--template=/Users/FireBook/.npm/_git-remotes/_templates',
+13 info git   '--mirror',
+13 info git   'git://github.com/jsdoc3/jsdoc.git',
+13 info git   '/Users/FireBook/.npm/_git-remotes/git-github-com-jsdoc3-jsdoc-git-0dba5517' ]
+14 error git clone --template=/Users/FireBook/.npm/_git-remotes/_templates --mirror git://github.com/jsdoc3/jsdoc.git /Users/FireBook/.npm/_git-remotes/git-github-com-jsdoc3-jsdoc-git-0dba5517: Agreeing to the Xcode/iOS license requires admin privileges, please re-run as root via sudo.
+15 verbose stack Error: Command failed: git clone --template=/Users/FireBook/.npm/_git-remotes/_templates --mirror git://github.com/jsdoc3/jsdoc.git /Users/FireBook/.npm/_git-remotes/git-github-com-jsdoc3-jsdoc-git-0dba5517
+15 verbose stack
+15 verbose stack
+15 verbose stack Agreeing to the Xcode/iOS license requires admin privileges, please re-run as root via sudo.
+15 verbose stack
+15 verbose stack
+15 verbose stack
+15 verbose stack     at ChildProcess.exithandler (child_process.js:751:12)
+15 verbose stack     at ChildProcess.emit (events.js:110:17)
+15 verbose stack     at maybeClose (child_process.js:1015:16)
+15 verbose stack     at Socket.<anonymous> (child_process.js:1183:11)
+15 verbose stack     at Socket.emit (events.js:107:17)
+15 verbose stack     at Pipe.close (net.js:485:12)
+16 verbose cwd /Users/FireBook/Documents/localhost/Bachelorarbeit
+17 error Darwin 14.5.0
+18 error argv "node" "/usr/local/bin/npm" "install" "-g" "git://github.com/jsdoc3/jsdoc.git"
+19 error node v0.12.4
+20 error npm  v2.10.1
+21 error code 69
+22 error Command failed: git clone --template=/Users/FireBook/.npm/_git-remotes/_templates --mirror git://github.com/jsdoc3/jsdoc.git /Users/FireBook/.npm/_git-remotes/git-github-com-jsdoc3-jsdoc-git-0dba5517
+22 error
+22 error
+22 error Agreeing to the Xcode/iOS license requires admin privileges, please re-run as root via sudo.
+23 error If you need help, you may report this error at:
+23 error     <https://github.com/npm/npm/issues>
+24 verbose exit [ 1, true ]

@@ -1,5 +1,12 @@
 /**
- * 
+ * Creates a selection element to show which element has the focus. The element
+ * gets an animated dashed border. It is possible to set the coordinates (x, y, width, height)
+ * or to give an element as parameter so the coordinates can be determined automatically.
+ * @constructor
+ * @param {Object/int} el - The x coordinate or a jQuery element.
+ * @param {int} [y] - The y coordinate. Ignored, if first parameter is an element.
+ * @param {int} [w] - The width. Ignored, if first parameter is an element.
+ * @param {int} [h] - The height. Ignored, if first parameter is an element.
  */
 function Selection(el, y, w, h) {
 	this.x = this.y = this.w = this.h = 0;
@@ -19,7 +26,12 @@ function Selection(el, y, w, h) {
 };
 
 /**
- * 
+ * Resizes and moves the selection element. The parameters are optional.
+ * If the @contructor follows an element this determines the new coordinates.
+ * @param {Object/int} el - The x coordinate or a jQuery element.
+ * @param {int} [y] - The y coordinate. Ignored, if first parameter is an element.
+ * @param {int} [w] - The width. Ignored, if first parameter is an element.
+ * @param {int} [h] - The height. Ignored, if first parameter is an element.
  */
 Selection.prototype.resize = function(el, y, w, h) {
 	if (this.deleted) return null;
@@ -47,7 +59,7 @@ Selection.prototype.resize = function(el, y, w, h) {
 };
 
 /**
- * 
+ * A local method to set the determined coordinates.
  */
 Selection.prototype._reposition = function() {
 	if (this.deleted) return null;
@@ -61,7 +73,8 @@ Selection.prototype._reposition = function() {
 };
 
 /**
- * 
+ * Removes the selection element and marks this object as deleted so it can't be
+ * used anymore.
  */
 Selection.prototype.remove = function() {
 	if (this.deleted) return null;
