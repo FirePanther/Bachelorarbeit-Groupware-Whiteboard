@@ -21,9 +21,14 @@ function Server(pathname, options) {
 	if (typeof pathname === "undefined") this.pathname = location.pathname.substr(-1) != "/" ? location.pathname.replace(/^.*?([^\/]+)$/, "$1") : "";
 	else this.pathname = pathname;
 	
+	if (this.pathname.indexOf(".html") > -1) {
+		this.pathname = location.search.substr(1);
+		this.htmlVersion = true;
+	}
+	
 	options = options || {};
 	
-	this.socket = io("http://tchost.de:24690/?board=" + this.pathname, options);
+	this.socket = io("http://" + SERVER + ":" + PORT + "/?board=" + this.pathname, options);
 	
 	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
 	this.socket.io.reconnection(false);
@@ -55,7 +60,7 @@ Server.prototype.init = function(alerts) {
 	
 	// url
 	this.socket.on("url", function(url) {
-		history.pushState({ url: url }, "board", url);
+		history.pushState({ url: url }, "board", (self.htmlVersion ? "static-index.html?" : "") + url);
 	});
 	
 	// error

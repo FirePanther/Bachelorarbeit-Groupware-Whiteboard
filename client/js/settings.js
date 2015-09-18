@@ -1,4 +1,5 @@
-var
+var SERVER = "localhost",
+	PORT = 24690,
 /**
  * the board max width is the maximum width of any board or element.
  */
