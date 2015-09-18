@@ -16,10 +16,11 @@
 		<script src="../js/Tools.ptt.js"></script>
 		<script src="../js/tools/a.Draw.ptt.js"></script>
 		<script src="../js/tools/b.Text.ptt.js"></script>
-		<script src="../js/tools/c.Shapes.ptt.js"></script>
+		<script src="../js/tools/c.Shape.ptt.js"></script>
+		<script src="../js/tools/d.Table.ptt.js"></script>
 		<script>
 			function testToolInterfaces() {
-				var objNames = ["Draw", "Text", "Shapes"];
+				var objNames = ["Draw", "Text", "Shape", "Table"];
 				for (var objX in objNames) {
 					var objName = objNames[objX];
 					
@@ -32,8 +33,8 @@
 						for (var x in obj.toolSettings) {
 							assertNotUndefined(objName + ": All tools need icons.", obj.toolSettings[x].icon);
 							if (obj.toolSettings[x].settings) {
-								foundSettings++;
 								for (var y in obj.toolSettings[x].settings) {
+									foundSettings++;
 									assertNotUndefined(objName + ": All settings need a type.", obj.toolSettings[x].settings[y].type);
 								}
 							}

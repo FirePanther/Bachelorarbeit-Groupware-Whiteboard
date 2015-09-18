@@ -1,9 +1,12 @@
 /**
  * Creates a chat element to chat with other clients.
  * @constructor
+ * @param {boolean} cookie - Use cookies for names?
  */
-function Chat() {
+function Chat(cookie) {
 	var self = this;
+	if (typeof cookie == "undefined") cookie = true;
+	
 	this.$history = $('<div class="history" />');
 	this.$input = $('<input type="text" id="chat" autocomplete="off" />');
 	this.$form = $('<form />').on("submit", function() {
@@ -28,9 +31,9 @@ function Chat() {
 	
 	this.history = {};
 	
-	this.initServer();
+	this.initServer(cookie);
 	
-	if (Cookies.get("name") !== undefined) {
+	if (cookie && Cookies.get("name") !== undefined) {
 		var name = this.validateName(Cookies.get('name'));
 		if (name) {
 			main.server.name = name;
@@ -43,11 +46,12 @@ function Chat() {
 /**
  * Initializes some server settings and functions to receive chat messages
  * and names.
+ * @param {boolean} cookie - Use cookies for names?
  */
-Chat.prototype.initServer = function() {
+Chat.prototype.initServer = function(cookie) {
 	var self = this;
-	BroadcastType.NAME = BroadcastType.index++;
 	BroadcastType.CHAT = BroadcastType.index++;
+	BroadcastType.NAME = BroadcastType.index++;
 	main.server.names = {};
 	main.server.broadcasts[BroadcastType.NAME] = function(resp) {
 		var name = self.validateName(resp.data);
@@ -57,7 +61,7 @@ Chat.prototype.initServer = function() {
 			}
 			main.server.names[resp.userId] = name;
 			self.refresh();
-			Cookies.set("name", name, { expires: 7 });
+			if (cookie) Cookies.set("name", name, { expires: 7 });
 		}
 	};
 	main.server.broadcasts[BroadcastType.CHAT] = function(resp) {
@@ -136,10 +140,10 @@ Chat.prototype.hide = function() {
 Chat.prototype.validateName = function(name) {
 	name = name
 		.replace(/^\s+/, "").replace(/\s+$/, "") // remove space at start and end
-		.replace(/\s/g, "-") // replace spaces with dash
+		.replace(/\s+/g, "-") // replace spaces with dash
 		.replace(/[^a-zA-Z0-9_-]/g, "") // only this chars are allowed
 		.substr(0, 20); // max 20 chars
-	if (name == "Me") return false;
+	if (name == "Me" || !name) return false;
 	return name;
 };
 

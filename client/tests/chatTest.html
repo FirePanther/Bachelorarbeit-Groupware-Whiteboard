@@ -20,21 +20,20 @@
 						},
 						lastBroadcastArguments: null,
 						broadcasts: {},
-						connect: [],
+						connects: [],
 						disconnects: []
 					}
 				};
 			
 			function testChatCreation() {
-				var chat = new Chat(),
+				var chat = new Chat(false),
 					broadcastTypeName = null;
-				assertEquals("BroadcastType added?", BroadcastType.index, 1);
-				for (var x in BroadcastType) {
-					if (x != "index") {
-						broadcastTypeName = x
-						break;
-					}
-				}
+				assertEquals("BroadcastType added?", 2, BroadcastType.index);
+				
+				// get first broadcast type name (the second would be "NAME", we want "CHAT")
+				var keys = Object.keys(BroadcastType);
+				if (keys[0] == "index") broadcastTypeName = keys[1];
+				else broadcastTypeName = keys[0];
 				
 				chat.submit();
 				assertNull("The message was empty, so no broadcast", main.server.lastBroadcastArguments);
@@ -55,6 +54,15 @@
 				var keys = Object.keys(chat.history);
 				assertEquals("First message by own (userId 0).", 0, chat.history[keys[0]].u);
 				assertEquals("Second message by foreign (userId 12).", 12, chat.history[keys[1]].u);
+			}
+			
+			function testChatNameValidation() {
+				var chat = new Chat(false);
+				assertFalse("No name is invalide", chat.validateName(""));
+				assertFalse("Me is invalide", chat.validateName("Me"));
+				assertTrue("mE should be allowed", !!chat.validateName("mE"));
+				
+				assertEquals("Spaces should be replaced smartly with dashes", "Suat-Secmen", chat.validateName("   Suat   Secmen   "));
 			}
 		</script>
 	</head>
