@@ -17,10 +17,13 @@ var BroadcastType = {
  * all broadcast events and arrays of all connect and disconnect events.
  * @constructor
  */
-function Server(pathname) {
+function Server(pathname, options) {
 	if (typeof pathname === "undefined") this.pathname = location.pathname.substr(-1) != "/" ? location.pathname.replace(/^.*?([^\/]+)$/, "$1") : "";
 	else this.pathname = pathname;
-	this.socket = io("http://tchost.de:24690/?board=" + this.pathname);
+	
+	options = options || {};
+	
+	this.socket = io("http://tchost.de:24690/?board=" + this.pathname, options);
 	
 	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
 	this.socket.io.reconnection(false);

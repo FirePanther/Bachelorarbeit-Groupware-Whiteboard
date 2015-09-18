@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+	<head>
+		<title>History Test</title>
+		<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+		<script src="jsunit/app/jsUnitCore.js"></script>
+		<script src="../js/Server.ptt.js"></script>
+		<script>
+			var data = {},
+				server, server2,
+				responses = 0,
+				expectedResponses = 6,
+				failTimeOut = null, 
+				failed = false,
+				sendDate = new Date().getTime(),
+				sendMessage = "Hello Suat - " + Math.random();
+			
+			function setUpPage() {
+				setUpPageStatus = "running";
+				server = new Server("", { 'force new connection': true });
+				
+				// url
+				server.socket.on("url", function(resp) {
+					data.url = resp;
+					
+					// connect a second client to the same url
+					server2 = new Server(data.url, { 'force new connection': true });
+					server2.socket.on("userId", function(resp) {
+						data.userId2 = resp;
+						server2.socket.emit("*", {
+							message: sendMessage
+						});
+					});
+					
+					increaseResponses();
+				});
+				
+				// userId
+				server.socket.on("userId", function(resp) {
+					data.userId = resp;
+					increaseResponses();
+				});
+				
+				// broadcast
+				server.socket.on("*", function(resp) {
+					data.broadcast = resp;
+					
+					server2.socket.disconnect();
+					
+					increaseResponses();
+				});
+				
+				// user connected
+				server.socket.on("userConnect", function(resp) {
+					// wait for the second client to receive his userId
+					var checkInterval = null,
+						check = function() {
+							if (data.userId2) {
+								data.connectId = resp;
+								clearInterval(checkInterval);
+								increaseResponses();
+							}
+						};
+					checkInterval = setInterval(check, 10);
+				});
+				
+				// user disconnected
+				server.socket.on("userDisconnect", function(resp) {
+					data.disconnectId = resp;
+					increaseResponses();
+				});
+				
+				// date
+				server.socket.on("date", function(resp) {
+					data.date = resp;
+					increaseResponses();
+				});
+				
+				// ask for date
+				server.socket.emit("date", sendDate);
+				
+				failTimeOut = setTimeout(function() {
+					// timeout
+					if (responses) {
+						failed = "Not enough responses (" + responses + " / " + expectedResponses + "):";
+						for (var x in data) {
+							failed += "\n- " + x;
+						}
+					} else failed = "No server connection or responses. Timed out.";
+					increaseResponses();
+				}, 3000);
+			}
+			
+			function increaseResponses() {
+				if (failed || ++responses == expectedResponses) {
+					setUpPageStatus = "complete";
+					server.socket.disconnect();
+					clearTimeout(failTimeOut);
+				}
+			}
+			
+			function testServerURL() {
+				if (failed) fail(failed);
+				var allowed = "dth4MDPioZyeUuHCv9pGVxjbLg7f8FQsX_azNmqRA61cWkB-w3EK+JSrTY5n2";
+				for (var i = 0, l = data.url.length; i < l; i++) {
+					assertTrue("is \"" + data.url[i] + "\" allowed", allowed.indexOf(data.url[i]) != -1);
+				}
+			}
+			
+			function testServerUserId() {
+				if (failed) fail(failed);
+				assertTrue("userId \"" + data.userId + "\" allowed", data.userId.length > 0);
+			}
+			
+			function testServerBroadcast() {
+				if (failed) fail(failed);
+				assertEquals("Got broadcast", sendMessage, data.broadcast.message);
+				assertEquals("The userId is like expected", data.userId2, data.broadcast.userId);
+			}
+			
+			function testServerConnect() {
+				if (failed) fail(failed);
+				assertEquals("The userId is like expected", data.userId2, data.connectId);
+			}
+			
+			function testServerDisconnect() {
+				if (failed) fail(failed);
+				assertEquals("The userId is like expected", data.userId2, data.disconnectId);
+			}
+			
+			function testServerDate() {
+				if (failed) fail(failed);
+				assertEquals("The received client date is the same like the sent date", sendDate, data.date.clientTime);
+				assertTrue("The received server date is an integer", data.date.serverTime % 1 === 0);
+				assertEquals("The received server date has a correct timestamp length", ("" + sendDate).length, ("" + data.date.serverTime).length);
+			}
+		</script>
+	</head>
+	<body></body>
+</html>
