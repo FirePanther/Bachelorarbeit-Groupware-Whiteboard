@@ -1,1 +1,1 @@
-var testfiles = ["board", "chat", "fewTools", "history"];
+var testfiles = ["board", "chat", "fewTools", "history", "server"];
