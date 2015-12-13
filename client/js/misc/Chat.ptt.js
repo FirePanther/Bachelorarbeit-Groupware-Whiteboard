@@ -187,4 +187,4 @@ Chat.prototype.refresh = function() {
 	this.$history.scrollTop((this.$history.prop("scrollHeight") - this.$history.innerHeight()) * scrollPos);
 };
 
-main.miscs.chat = new Chat();
+if (typeof test == "undefined" || !test) main.miscs.chat = new Chat();

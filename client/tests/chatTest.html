@@ -5,9 +5,9 @@
 		<script src="jsunit/app/jsUnitCore.js"></script>
 		<script src="../js/jq.js"></script>
 		<script src="../js/settings.js"></script>
-		<script src="../js/misc/Chat.ptt.js"></script>
 		<script>
 			// some settings
+			test = true;
 			var BroadcastType = { index: 0 },
 				main = {
 					miscs: {},
@@ -24,7 +24,9 @@
 						disconnects: []
 					}
 				};
-			
+		</script>
+		<script src="../js/misc/Chat.ptt.js"></script>
+		<script>
 			function testChatCreation() {
 				var chat = new Chat(false),
 					broadcastTypeName = null;

@@ -1,5 +1,5 @@
 {
 	"source": {
-		"exclude": ["client/tests/"]
+		"exclude": ["client/tests/", "server/node_modules/"]
 	}
 }

@@ -1,5 +1,14 @@
-var SERVER = "localhost",
+var
+/**
+ * server settings
+ */
+	SERVER = "localhost",
 	PORT = 24690,
+
+/**
+ * rewrite rule (mod_rewrite) activated?
+ */
+	REWRITERULE = true,
 /**
  * the board max width is the maximum width of any board or element.
  */
@@ -9,7 +18,7 @@ var SERVER = "localhost",
  */
 	BOARDMAXHEIGHT = 2000,
 /**
- * the multiplier resizes the board and allows to draw sharp even on higher dpis (e.g. retina displays).
+ * the multiplier resizes the board and allows to draw sharp even on a higher dpi (e.g. retina displays).
  */
 	MULTIPLIER = 2,
 /**

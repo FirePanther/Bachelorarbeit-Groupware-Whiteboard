@@ -1,2 +1,2 @@
-## Collaborative Realtime Whiteboard
-This groupware is a project of *Suat Secmen*
+### Groupware Editor for Collaborative Working with Several Tools on a Web-Whiteboard
+#### Suat Secmen

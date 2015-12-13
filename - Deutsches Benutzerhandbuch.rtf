@@ -1,0 +1,50 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11640\viewh10780\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\b\fs28 \cf0 Server
+\b0\fs24 \
+Zuerst muss NodeJS installiert werden\
+(Anleitung: https://github.com/nodejs/node-v0.x-archive/wiki/Installing-Node.js-via-package-manager)\
+\
+Nun wechseln wir in das Verzeichnis des Servers:\
+
+\i cd pfad-zum-server
+\i0 \
+\
+Mit dem Befehl: 
+\i node server.js
+\i0  oder 
+\i nodejs server.js
+\i0  wird nun der Server gestartet.\
+\
+
+\b\fs28 Client
+\b0\fs24 \
+F\'fcr den Client wird ein Webserver (wie Apache oder nginx) empfohlen. Auf diese Weise kann durch http://localhost/pfad-zum-client/ die PHP-Datei aufgerufen werden, die automatisch alle ben\'f6tigten Dateien in der richtigen Reihenfolge und einer Version (zum Verhindern von Caching) l\'e4dt.\
+Falls kein Webserver zur Hand liegt kann die "static-index.html"-Datei aufgerufen werden.\
+Die Servereinstellungen k\'f6nnen in der client/js/settings.js Datei eingestellt werden. Wenn man als Servernamen "tchost.de" und als Port "24690" eintr\'e4gt, so wird eine Verbindung zum Server von mir hergestellt.\
+
+\b Noch ein Hinweis
+\b0 : Im Ordner "client" ist eine wohlm\'f6glich unsichtbare ".htaccess"-Datei (zur Not existiert eine Kopie mit dem Namen "~.htaccess", was nicht unsichtbar sein sollte). Diese Datei setzt "Rewrite"-Regeln (Apache). Falls das Aktivieren von mod_rewrite in Apache oder das rewrite_module in nginx nicht m\'f6glich ist, so muss die REWRITERULE-Variable in den settings.js auf false gesetzt werden. Auf diese Weise wird auf einen Query-String ausgewichen (die Raum-ID wird hinter einem Fragezeichen in der Adressleiste angezeigt). Falls die "static-index.html"-Datei benutzt wird, ist diese Option egal (in dieser Datei wird n\'e4mlich immer auf den Query-String ausgewichen).\
+\
+
+\b\fs28 Tests
+\b0\fs24 \
+Die client/testRunner.html erm\'f6glicht das Ausf\'fchren von Tests. Die Testdateien befinden sich in client/tests/*.html, eine Verlinkung zu diesen Dateien wurde in der client/tests/-settings.js Datei eingestellt.\
+\
+
+\b\fs28 Dokumentation
+\b0\fs24 \
+Um die Dokumentation zu \'f6ffnen startet man die jsdoc-client/index.html Datei. Hier kann man zu den ganzen Dokumentationen navigieren. Um nach der Bearbeitung eines Prototypen die Dokumentation neu zu generieren kann die doc.sh Datei ausgef\'fchrt werden (ben\'f6tigt chmod +x).\
+Die conf.json Datei ist die Konfigurationsdatei f\'fcr JSDoc und wird zurzeit ausschlie\'dflich zum Ausschlie\'dfen von Ordnern aus der Dokumentation benutzt.\
+\
+
+\b\fs28 Das Whiteboard selbst
+\b0\fs24 \
+Meiner Meinung nach ist das Whiteboard sehr intuitiv und ben\'f6tigt kaum eine Einf\'fchrung. Das Einzige, was weniger intuitiv ist, was in der Bachelorarbeit jedoch erkl\'e4rt wurde, ist das Zeichnen von Tabellen.\
+Nachdem man eine Tabelle erzeugt hat ist es m\'f6glich, in der Tabelle Linien zu ziehen und dadurch Zeilen und Spalten zu erzeugen.\
+Ein "kleines Gimmick" im Chat ist das Umbenennen. Beim Absenden der Nachricht "/name" gefolgt von einem Leerzeichen und dem Wunschnamen \'e4ndert man seinen eigenen Namen in den Wunschnamen um. Man selbst ist nicht in der Lage den Namen zu sehen, jedoch bekommen andere Benutzer diesen Namen, statt der Benutzer-ID, neben dem Mauszeiger und im Chat angezeigt.\
+}

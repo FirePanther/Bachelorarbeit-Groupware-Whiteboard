@@ -20,10 +20,14 @@ var BroadcastType = {
 function Server(pathname, options) {
 	if (typeof pathname === "undefined") this.pathname = location.pathname.substr(-1) != "/" ? location.pathname.replace(/^.*?([^\/]+)$/, "$1") : "";
 	else this.pathname = pathname;
+	this.queryString = "";
 	
 	if (this.pathname.indexOf(".html") > -1) {
 		this.pathname = location.search.substr(1);
-		this.htmlVersion = true;
+		this.queryString = "static-index.html?";
+	} else if (!REWRITERULE) {
+		this.pathname = location.search.substr(1);
+		this.queryString = "?";
 	}
 	
 	options = options || {};
@@ -31,7 +35,7 @@ function Server(pathname, options) {
 	this.socket = io("http://" + SERVER + ":" + PORT + "/?board=" + this.pathname, options);
 	
 	// manager: http://socket.io/docs/client-api/#manager(url:string,-opts:object)
-	this.socket.io.reconnection(false);
+	this.socket.io.reconnection(true);
 	
 	this.userId = 0;
 	
@@ -60,7 +64,11 @@ Server.prototype.init = function(alerts) {
 	
 	// url
 	this.socket.on("url", function(url) {
-		history.pushState({ url: url }, "board", (self.htmlVersion ? "static-index.html?" : "") + url);
+		if (location.origin == "file://") {
+			location.href = self.queryString + url;
+		} else {
+			history.pushState({ url: url }, "board", self.queryString + url);
+		}
 	});
 	
 	// error
