@@ -1,6 +1,0 @@
-Script: http://localhost/Bachelorarbeit/client/js/tools/b.Text.ptt.js?v=5e3aa804 (139)
-
-SocketId: eHNJA5b7h53M7TAcAAAE
-
-Message:
-Uncaught TypeError: self.addHistory is not a function
