@@ -1,6 +1,6 @@
 {
   "name": "whiteboard",
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "collaborative whiteboard",
   "dependencies": {
     "http": "0.0.0",
