@@ -2,7 +2,9 @@
 #### Suat Secmen
 
 Live Demo: https://suat.be/bachelor/client/
+
 You can find the jsdoc documentation here: https://suat.be/bachelor/jsdoc/
+
 The tests can be run here: https://suat.be/bachelor/client/testRunner.html  
 (and the individual test files: https://suat.be/bachelor/client/tests/)
 
