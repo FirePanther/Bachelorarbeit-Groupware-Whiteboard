@@ -1,8 +1,10 @@
 ### Groupware Editor for Collaborative Working with Several Tools on a Web-Whiteboard
 #### Suat Secmen
 
-Live Demo: https://suat.be/bachelor/client/  
+Live Demo: https://suat.be/bachelor/client/
 You can find the jsdoc documentation here: https://suat.be/bachelor/jsdoc/
+The tests can be run here: https://suat.be/bachelor/client/testRunner.html  
+(and the individual test files: https://suat.be/bachelor/client/tests/)
 
 # German User Manual
 ## Server
